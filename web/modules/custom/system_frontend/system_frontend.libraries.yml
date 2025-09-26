@@ -1,0 +1,12 @@
+global:
+  version: 1.0.2
+  css:
+    theme:
+      assets/global/css/backend.css: {}
+      assets/global/css/paragraphs.css: {}
+  js:
+      assets/global/js/paragraphs.js: {}
+      assets/global/js/backend.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once

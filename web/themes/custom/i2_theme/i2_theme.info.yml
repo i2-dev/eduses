@@ -1,0 +1,30 @@
+name: 'i2 theme'
+type: theme
+description: 'i2 theme subtheme based on Bootstrap 5 theme.'
+core_version_requirement: ^9.2 || ^10 || ^11
+'base theme': bootstrap5
+libraries:
+  - i2_theme/global-styling
+ckeditor_stylesheets:
+  - css/style.css
+ckeditor5-stylesheets:
+  - css/ck5style.css
+stylesheets-remove:
+  - '@bootstrap5/css/style.css'
+regions:
+  header: Header
+  nav_left: 'Navigation Left'
+  nav_center: 'Navigation Center'
+  nav_right: 'Navigation right'
+  nav_search: 'Main search button'
+  nav_navigation: 'Main navigation region'
+  breadcrumb: Breadcrumbs
+  content: 'Main content'
+  sidebar_first: 'Sidebar first'
+  sidebar_second: 'Sidebar second'
+  footer: Footer
+  footer_top_left: 'Footer Top Left'
+  footer_top_right: 'Footer Top Right'
+  footer_bottom_left: 'Footer Bottom Left'
+  footer_bottom_right: 'Footer Bottom Right'
+  content_none: 'Content none'

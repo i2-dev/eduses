@@ -1,0 +1,52 @@
+/* system CSS ------------------------------------------------------------------------------*/
+@media screen and (min-width: 61rem) {
+
+    body .layout-region--node-main,
+    body .layout-region--node-footer,
+    body .layout-region--main,
+    body .layout-region--footer {
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+.paragraphs-content-wrapper .summary-content:nth-child(1) {
+    font-weight: 800;
+    font-size: 110%;
+}
+
+#block-i2-theme-content .field--name-field-class {
+    display: none;
+}
+
+.placeholder {
+    background-color: unset;
+}
+
+.views-bulk-actions {
+    margin-top: 60px;
+}
+
+/* system CSS ------------------------------------------------------------------------------*/
+.view-admin-webform-view-page.view-display-id-page_1 .views-field-operations ul.dropbutton>li:not(:first-child, :nth-child(2), :nth-child(3), :nth-child(4)),
+.path-admin-nolimits .toolbar-icon-admin-toolbar-tools-extra-linkssystem-theme-settings-theme-bootstrap5,
+.path-admin-nolimits .toolbar-icon-admin-toolbar-tools-extra-linkssystem-theme-settings-theme-claro,
+.path-admin-nolimits .toolbar-icon-admin-toolbar-tools-extra-linkssystem-theme-settings-theme-olivero,
+.path-admin-nolimits #block-claro-primary-local-tasks>nav>ul>li:first-child {
+    display: none;
+}
+
+
+/* webform system CSS ------------------------------------------------------------------------------*/
+.path-admin-formReviewer #block-claro-primary-local-tasks nav li:not(:first-child),
+.path-admin-formReviewer form#webform-bulk-form table.webform-forms ul.dropbutton--multiple li,
+.path-admin-formReviewer #block-claro-secondary-local-tasks ul.tabs>li {
+    display: none;
+}
+.path-admin-formReviewer #block-claro-secondary-local-tasks ul.tabs>li:nth-child(1),
+.path-admin-formReviewer #block-claro-secondary-local-tasks ul.tabs>li:nth-child(3),
+.path-admin-formReviewer form#webform-bulk-form table.webform-forms ul.dropbutton--multiple li:nth-child(1),
+.path-admin-formReviewer form#webform-bulk-form table.webform-forms ul.dropbutton--multiple li:nth-child(2),
+.path-admin-formReviewer form#webform-bulk-form table.webform-forms ul.dropbutton--multiple li:nth-child(5) {
+    display: block;
+}

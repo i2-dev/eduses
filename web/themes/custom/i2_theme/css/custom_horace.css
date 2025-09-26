@@ -1,0 +1,28 @@
+/* system ***************************************************/
+@media (min-width: 992px) {
+    .container-user {
+        max-width: 960px;
+        display: flex;
+        justify-content: center;
+        /* 水平居中 */
+        align-items: center;
+        /* 垂直居中 */
+        height: 100vh;
+        /* 设置容器高度以便于垂直居中 */
+    }
+}
+
+.no-padding .paragraph {
+    padding: 0 !important;
+    margin-bottom: 40px;
+}
+
+.page-node-34 .block-system-breadcrumb-block .breadcrumb li:last-child,
+.page-node-35 .block-system-breadcrumb-block .breadcrumb li:last-child,
+.page-node-36 .block-system-breadcrumb-block .breadcrumb li:last-child,
+.page-node-37 .block-system-breadcrumb-block .breadcrumb li:last-child,
+.page-node-38 .block-system-breadcrumb-block .breadcrumb li:last-child,
+.page-node-39 .block-system-breadcrumb-block .breadcrumb li:last-child,
+.page-node-72 .block-system-breadcrumb-block .breadcrumb li:last-child {
+    text-indent: -9999px;
+}

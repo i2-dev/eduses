@@ -1,0 +1,15 @@
+name: system_frontend
+description: system_frontend
+type: module
+# core: 8.x
+
+version: '8.x-1.0'
+
+libraries:
+- system_frontend/system-frontend
+
+package: 'custom'
+core: '10.x'
+core_version_requirement: ^8 || ^9 || ^10 || ^11
+project: 'system_frontend'
+datestamp: 1678936750

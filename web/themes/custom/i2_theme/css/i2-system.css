@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 /* CSS value  ***********************************************/
 *:focus {
     /* outline: -webkit-focus-ring-color auto 5px !important;
@@ -30,7 +30,7 @@
     .row>* {
         padding-left: 25px;
         padding-right: 25px;
-    }    
+    }
 }
 
 :root {
@@ -39,7 +39,7 @@
     /* h1 */
     --font-size-xl: clamp(35px, 3.45vw, 60px);
     /* h2 */
-    --font-size-lg: clamp(28px, 2.64vw, 46px); 
+    --font-size-lg: clamp(28px, 2.64vw, 46px);
     /* h3 */
     --font-size-md: 28px;
     /* h4 */
@@ -79,7 +79,7 @@
 }
 
 @media all and (max-width: 1199.98px) {
-    :root {        
+    :root {
         --font-size-md: 24px;
         --font-size-sm: 22px;
     }
@@ -181,12 +181,12 @@
 .alink:hover,
 .alink:active,
 .alink:focus {
-    color: #192347;
+    color: #14833E;
     text-decoration: underline;
 }
 
 /* Bootstrap Grid System (8-column grid) ***************************************************/
-.col-1 {
+/* .col-1 {
     flex: 0 0 auto;
     width: 12.5%;
 }
@@ -387,10 +387,10 @@
         flex: 0 0 auto;
         width: 100%;
     }
-}
+} */
 
 /* global  ***************************************************/
-.mb-5 {
+/* .mb-5 {
     margin-bottom: 5px !important;
 }
 
@@ -462,13 +462,17 @@
     .mb-mob-80 {
         margin-bottom: 80px;
     }
-}
+} */
 
 /* CSS Document  ***************************************************/
 body {
     color: #000;
     /* font-size: var(--body-font-size);     */
-    font-family: 'Manrope', Arial, sans-serif;    
+    font-family: "Roboto", "Noto Sans TC", Arial, sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings: "wdth" 100;
     -webkit-overflow-scrolling: touch;
     line-height: var(--body-line-height);
 }
@@ -490,7 +494,7 @@ p {
     word-wrap: break-word;
 }
 
-a {    
+a {
     transition: all 0.2s ease;
 }
 
@@ -501,7 +505,7 @@ p {
 a:hover,
 a:active,
 a:focus {
-    color: #0042A6;
+    color: #14833E;
     text-decoration: none;
 }
 
@@ -537,7 +541,7 @@ h6,
 h1,
 .h1,
 .block-banner .carousel-caption .contact-h1 {
-    font-size: var(--font-size-xl);    
+    font-size: var(--font-size-xl);
     font-weight: 800;
 }
 

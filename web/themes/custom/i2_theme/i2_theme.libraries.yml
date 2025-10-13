@@ -2,23 +2,20 @@ global-styling:
   version: 1.0.2
   css:
     theme:
-      css/pojo-a11y-style.css: {}
       css/style.css: {}
       css/loader.css: {}
+      css/swiper-bundle.min.css: {}
       css/aos.css: {}
       css/i2-system.css: {}
       css/custom.css: {}
       css/custom_horace.css: {}
   js:
     js/loader.js: {}
-    js/pojo-a11y-style.js: {}
     js/swiper-bundle.min.js: {}
     js/i2-system.js: {}
     js/i2.js: {}
     js/aos.js: {}
     js/bootstrap-system.js: {}
-    js/calendar-custom.js: {}
-    js/fontsize.js: {}
     js/custom.js: {}
   dependencies:
   - core/jquery

@@ -1,30 +1,34 @@
 /* system CSS ------------------------------------------------------------------------------*/
 @media screen and (min-width: 61rem) {
+  body .layout-region--node-main,
+  body .layout-region--node-footer,
+  body .layout-region--main,
+  body .layout-region--footer {
+    max-width: 100%;
+    width: 100%;
+  }
+}
 
-    body .layout-region--node-main,
-    body .layout-region--node-footer,
-    body .layout-region--main,
-    body .layout-region--footer {
-        max-width: 100%;
-        width: 100%;
-    }
+body.user-logged-in header {
+  position: relative;
+  top: 0 !important;
 }
 
 .paragraphs-content-wrapper .summary-content:nth-child(1) {
-    font-weight: 800;
-    font-size: 110%;
+  font-weight: 800;
+  font-size: 110%;
 }
 
 #block-i2-theme-content .field--name-field-class {
-    display: none;
+  display: none;
 }
 
 .placeholder {
-    background-color: unset;
+  background-color: unset;
 }
 
 .views-bulk-actions {
-    margin-top: 60px;
+  margin-top: 60px;
 }
 
 /* system CSS ------------------------------------------------------------------------------*/
@@ -33,7 +37,7 @@
 .path-admin-nolimits .toolbar-icon-admin-toolbar-tools-extra-linkssystem-theme-settings-theme-claro,
 .path-admin-nolimits .toolbar-icon-admin-toolbar-tools-extra-linkssystem-theme-settings-theme-olivero,
 .path-admin-nolimits #block-claro-primary-local-tasks>nav>ul>li:first-child {
-    display: none;
+  display: none;
 }
 
 
@@ -41,12 +45,21 @@
 .path-admin-formReviewer #block-claro-primary-local-tasks nav li:not(:first-child),
 .path-admin-formReviewer form#webform-bulk-form table.webform-forms ul.dropbutton--multiple li,
 .path-admin-formReviewer #block-claro-secondary-local-tasks ul.tabs>li {
-    display: none;
+  display: none;
 }
+
 .path-admin-formReviewer #block-claro-secondary-local-tasks ul.tabs>li:nth-child(1),
 .path-admin-formReviewer #block-claro-secondary-local-tasks ul.tabs>li:nth-child(3),
 .path-admin-formReviewer form#webform-bulk-form table.webform-forms ul.dropbutton--multiple li:nth-child(1),
 .path-admin-formReviewer form#webform-bulk-form table.webform-forms ul.dropbutton--multiple li:nth-child(2),
 .path-admin-formReviewer form#webform-bulk-form table.webform-forms ul.dropbutton--multiple li:nth-child(5) {
-    display: block;
+  display: block;
+}
+
+
+/* backend CSS ------------------------------------------------------------------------------*/
+body.page-node-type-page.homepage-edit-page .field--name-field-details-paragraphs,
+body.page-node-type-page.homepage-edit-page #edit-group-banner-section,
+body.page-node-type-page:not(.homepage-edit-page) .field--name-field-homepage-details-paragraph {
+  display: none;
 }

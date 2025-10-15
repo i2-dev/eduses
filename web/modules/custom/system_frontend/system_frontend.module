@@ -13,14 +13,4 @@ function system_frontend_page_attachments(array &$attachments)
 }
 
 
-/**
- * Implements hook_preprocess_html().
- */
-function system_frontend_preprocess_html(&$variables) {
-  $user = \Drupal::currentUser();
-  if ($user->hasRole('form_reviewer')) {
-    $variables['attributes']['class'][] = 'path-admin-formReviewer';
-  } else if ($user->hasRole('nolimits_admin')) {
-    $variables['attributes']['class'][] = 'path-admin-nolimits';
-  } else{}
-}
+

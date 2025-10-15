@@ -3,11 +3,26 @@
 .field--name-field-column-widths {
   display: none;
 }
+
 .paragraph>.paragraph__column {
   padding: 0;
 }
+
+.paragraph--type--common-button .field--name-field-common-button-type {
+  display: none;
+}
+
 /* News && Events list ***************************************************/
 .view-data-news-events-year,
-.view-id-block_news_events_list.view-display-id-block_1 input.form-submit{
+.view-id-block_news_events_list.view-display-id-block_1 input.form-submit {
+  display: none;
+}
+
+/* people list ***************************************************/
+.card-people {
+  cursor: pointer;
+}
+
+.block-views-blockdata-taxonomy-sdgs-block-1 {
   display: none;
 }

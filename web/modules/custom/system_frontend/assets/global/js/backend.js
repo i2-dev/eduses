@@ -1,13 +1,44 @@
 jQuery(function ($) {
     $(document).ready(function () {
+        // 獲取HTML的lang屬性值 - 多種方法
         var lang = document.documentElement.getAttribute('lang');
+        switch (lang) {
+          case 'en-gb':
+            lang = '';
+            break;
+          case 'zh-hant':
+            lang = 'zh-hant';
+            break;
+          case 'zh-hans':
+            lang = 'zh-hans';
+            break;
+        }
+
+        // 獲取URL倒數第二個的ID
+        function getSecondToLastIdFromUrl() {
+            var pathSegments = window.location.pathname.split('/').filter(function(segment) {
+                return segment !== '';
+            });
+
+            if (pathSegments.length >= 2) {
+                return pathSegments[pathSegments.length - 2];
+            }
+            return null;
+        }
+
 
         // 檢查是否為homepage edit page (node ID 3)
-        // 方法1: 使用URL檢查 (最可靠)
         if (window.location.pathname === '/node/3/edit') {
             $('body').addClass('homepage-edit-page');
             // 在這裡添加您想要的功能
         }
-
+        // people 的profile_link 自動生成
+        if ($('body').hasClass('user-logged-in path-node page-node-type-people')) {
+            var profile_link = $('#edit-field-profile-links-0-value').val();
+            var Id = getSecondToLastIdFromUrl();
+            if (!profile_link) {
+                $('#edit-field-profile-links-0-value').val(lang + '/people#' + Id);
+            }
+        }
     });
 });

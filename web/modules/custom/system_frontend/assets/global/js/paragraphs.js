@@ -1,10 +1,10 @@
 jQuery(function ($) {
   $(document).ready(function () {
     $('.paragraph:not(.paragraph--type--section):not(form.node-form .paragraph)').each(function () {
-      var show_name = $(this).find('.paragraph__column>.field--name-field-state').text().trim();
-      var class_name = $(this).find('>.paragraph__column>.field--name-field-class').text().trim();
-      var class_width = $(this).find('>.paragraph__column>.field--name-field-width').text().trim();
-      var background_image = $(this).find('>.paragraph__column>.field--name-field-background img').attr('src');
+      var show_name = $(this).find('.paragraph__column .field--name-field-state').text().trim();
+      var class_name = $(this).find('>.paragraph__column .field--name-field-class').text().trim();
+      var class_width = $(this).find('>.paragraph__column .field--name-field-width').text().trim();
+      var background_image = $(this).find('>.paragraph__column .field--name-field-background img').attr('src');
       var column_text = $(this).find('>.paragraph__column .field--name-field-column-widths').text().trim();
       if (class_name) {
         $(this).parent().addClass(class_name);

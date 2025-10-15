@@ -191,7 +191,6 @@ ul {
   .container {
     max-width: 1770px;
   }
-
   .view-block-programme-list .view-filters form,
   .view-block-programme-list .view-content,
   .webform-confirmation__message,
@@ -203,6 +202,13 @@ ul {
   }
 }
 
+.node__content .container {
+  max-width: 1490px;  
+}
+.node__content .container .layout__region--content {
+  padding-top: 100px;
+  padding-bottom: 100px;
+}
 .layout--twocol-section>.layout__region {
   flex: 0 1 auto !important;
   width: 100%;
@@ -589,29 +595,111 @@ footer .navbar-nav .nav-item .dropdown-item:focus {
 
 /* Highlights Section */
 .highlights-section {
-  background: url(../image/content/highlights_section_bg.webp) right center no-repeat;
-  background-size: auto 100%;
-  padding-top: 100px;
-  padding-bottom: 75px;
+  position: relative;  
+  padding-top: 100px;  
+}
+.highlights-section::before {
+  background: url(../image/content/highlights_section_bg.webp) no-repeat;
+  background-size: cover;
+  content: '';
+  position: absolute;
+  left: 66.66%;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: -1;
 }
 .highlights-section .content {
   display: flex;
 }
 .highlights-section .content .left-content {
+  display: flex;
+  flex-direction: column;
   flex: 0 0 auto;
   width: 50%;
 }
+.highlights-section .content .left-content h2 {
+  color: #005D19;  
+  font-weight: 600;
+  line-height: calc(100% + 10px);
+  margin-top: 74px;
+  margin-bottom: 50px;
+  padding-left: 25px;
+}
+.highlights-section .content .left-content .left-sub-content {
+  background-image: url(../image/content/highlights_left_bg.webp);
+  background-size: cover;
+  background-repeat: no-repeat;
+  flex: 1 1 auto;
+  width: 100%;  
+  padding: 50px 75px 50px 25px;
+}
+.highlightsLeftSwiper {
+  height: 100%;
+  padding-bottom: 70px;
+}
+.highlightsLeftSwiper .swiper-slide h3 {
+  color: #fff;
+  font-size: 24px;
+  line-height: 1.667;
+}
+.highlightsLeftSwiper .swiper-slide p {
+  color: #fff;
+  font-size: 16px;
+  line-height: 1.625;
+}
+.highlightsLeftSwiper .swiper-button-next,
+.highlightsLeftSwiper .swiper-button-prev {
+  background: #14833E url(../image/icon/swiper_button_arrow.svg) center center no-repeat;
+  border: #fff 1px solid;
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  top: auto;
+  bottom: 0px;
+  transition: all 0.2s ease;
+}
+.highlightsLeftSwiper .swiper-button-next {
+  right: 0px;
+}
+.highlightsLeftSwiper .swiper-button-prev {
+  transform: rotate(180deg);
+  left: auto;
+  right: 55px;
+}
+.highlightsLeftSwiper .swiper-button-next::after,
+.highlightsLeftSwiper .swiper-button-prev::after {
+  content: none;
+}
+.highlightsLeftSwiper .swiper-button-next:hover,
+.highlightsLeftSwiper .swiper-button-prev:hover {
+  background: #C0DE1A url(../image/icon/swiper_button_arrow_hover.svg) center center no-repeat;
+}
+.highlightsLeftSwiper .swiper-pagination-bullets {
+  width: auto;
+  left: -5px;
+  bottom: 0px;
+}
+.highlightsLeftSwiper .swiper-pagination-bullets .swiper-pagination-bullet {
+  background-color: #FFF;
+  width: 10px;
+  height: 10px;
+  margin: 0 5px;
+  opacity: .6;
+}
+.highlightsLeftSwiper .swiper-pagination-bullets .swiper-pagination-bullet-active {
+  background-color: #FF7716;
+  opacity: 1;
+}
+
 .highlights-section .content .right-content {
   flex: 0 0 auto;
   width: 50%;
+  margin-bottom: 75px;
 }
-.highlightsLeftSwiper {
-
+.highlightsRightSwiper {
+  margin-left: -35px;
 }
-/* .highlightsRightSwiper {
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-} */
 .highlightsRightSwiper .swiper-slide {
   aspect-ratio: 16 / 10;
   overflow: hidden;
@@ -628,10 +716,446 @@ footer .navbar-nav .nav-item .dropdown-item:focus {
   padding-bottom: 62.5%;
 }
 
-/* News Swiper */
-.HomepageNews-Swiper .swiper-slide {
-  max-width: 300px;
+/* News & Events Section */
+.paragraph--id--7>.paragraph__column>h2 {
+  margin-bottom: 0;
 }
+.view-block-homepage-news-events {
+  background: url(../image/content/news_events_section_bg.webp) no-repeat;
+  background-size: cover;
+  padding-top: 150px;
+  padding-bottom: 100px;
+}
+.view-block-homepage-news-events .view-header section {
+  display: flex;  
+  gap: 20px;
+  max-width: 1490px;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin: 0 auto 50px;
+  padding-left: 25px;
+  padding-right: 25px;
+}
+.view-block-homepage-news-events .view-header section h2 {
+  color: #005D19;    
+  line-height: calc(100% + 10px);  
+  margin-bottom: 0;  
+}
+.view-block-homepage-news-events .view-header section a {
+  position: relative;
+}
+.view-block-homepage-news-events .view-header section a:hover,
+.view-block-homepage-news-events .view-header section a:focus {
+  color: #000;
+}
+.view-block-homepage-news-events .view-header section a::after {
+  background: #F96339 url(../image/icon/btn_arrow_white.svg) center center no-repeat;
+  border-radius: 50%;
+  content: '';
+  display: inline-block;
+  width: 34px;
+  height: 34px;
+  vertical-align: middle;
+  margin-left: 15px;
+  transition: all 0.2s ease;
+}
+.view-block-homepage-news-events .view-header section a:hover::after,
+.view-block-homepage-news-events .view-header section a:focus::after {
+  background: #C0DE1A url(../image/icon/btn_arrow_black.svg) center center no-repeat;
+}
+/* News Swiper */
+.HomepageNews-Swiper {
+  margin-left: 25px;
+  padding-bottom: 50px;
+}
+.HomepageNews-Swiper .swiper-slide {
+  width: 100%;
+  max-width: 340px;
+}
+.HomepageNews-Swiper .swiper-slide .new-card {
+  border: none;
+  border-radius: 0;
+}
+.HomepageNews-Swiper .swiper-slide .new-card .cover-link {
+  text-indent: -9999px;
+  overflow: hidden;
+  position: absolute;
+  inset: 0;
+}
+.HomepageNews-Swiper .swiper-slide .new-card .card-img-top {
+  border-radius: 0;
+  width: 100%;
+  aspect-ratio: 1;  
+  overflow: hidden;
+}
+.HomepageNews-Swiper .swiper-slide .new-card .card-img-top img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.2s ease-in-out;
+}
+.HomepageNews-Swiper .swiper-slide .new-card:hover .card-img-top img,
+.HomepageNews-Swiper .swiper-slide .new-card:focus .card-img-top img {
+  transform: scale(1.08);
+}
+.HomepageNews-Swiper .swiper-slide .new-card .card-body {  
+  border-bottom: #42B374 3px solid;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+.HomepageNews-Swiper .swiper-slide .new-card:hover .card-body,
+.HomepageNews-Swiper .swiper-slide .new-card:focus .card-body {
+  background-color: #14833E;
+}
+.HomepageNews-Swiper .swiper-slide .new-card .card-body .card-tag {
+  border: #F96339 1px solid;
+  border-radius: 16px;
+  color: #F96339;
+  display: inline-block;
+  line-height: 1.75;
+  margin-bottom: 10px;
+  padding: 1px 14px;
+  transition: all 0.3s ease;
+}
+.HomepageNews-Swiper .swiper-slide .new-card:hover .card-body .card-tag,
+.HomepageNews-Swiper .swiper-slide .new-card:focus .card-body .card-tag {
+  border-color: #C0DE1A;
+  color: #C0DE1A;
+}
+.HomepageNews-Swiper .swiper-slide .new-card .card-body .card-text {
+  font-size: 18px;
+  line-height: 1.667;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+}
+.HomepageNews-Swiper .swiper-slide .new-card .card-body .card-text * {
+  transition: all 0.3s ease;
+}
+.HomepageNews-Swiper .swiper-slide .new-card:hover .card-body .card-text *,
+.HomepageNews-Swiper .swiper-slide .new-card:focus .card-body .card-text * {
+  color: #fff;
+}
+.HomepageNews-Swiper .swiper-slide .new-card .card-body .card-date {
+  color: #14833E;
+  line-height: 1.1875;
+  transition: all 0.3s ease;
+}
+.HomepageNews-Swiper .swiper-slide .new-card:hover .card-body .card-date,
+.HomepageNews-Swiper .swiper-slide .new-card:focus .card-body .card-date {
+  border-color: #C0DE1A;
+  color: #C0DE1A;
+}
+.HomepageNews-button {
+  max-width: 1490px;
+  height: 40px;
+  margin: 0 auto;
+  position: relative;
+}
+.HomepageNews-button .swiper-button-next,
+.HomepageNews-button .swiper-button-prev {
+  background: #14833E url(../image/icon/swiper_button_arrow.svg) center center no-repeat;
+  border: #fff 1px solid;
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  top: auto;
+  bottom: 0px;
+  transition: all 0.2s ease;
+}
+.HomepageNews-button .swiper-button-next {
+  right: 25px;
+}
+.HomepageNews-button .swiper-button-prev {
+  transform: rotate(180deg);
+  left: auto;
+  right: 80px;
+}
+.HomepageNews-button .swiper-button-next::after,
+.HomepageNews-button .swiper-button-prev::after {
+  content: none;
+}
+.HomepageNews-button .swiper-button-next:hover,
+.HomepageNews-button .swiper-button-prev:hover {
+  background: #C0DE1A url(../image/icon/swiper_button_arrow_hover.svg) center center no-repeat;
+}
+
+/* Programme Information */
+.programme-info-section {
+  padding-top: 100px;
+  padding-bottom: 100px;
+  position: relative;
+}
+.programme-info-section::before {
+  background: url(../image/content/programme_info_section_bg.webp) no-repeat;
+  background-size: cover;
+  background-position-x: center;
+  content: '';
+  position: absolute;
+  inset: 0;
+  top: 47%;
+}
+.programme-info-section .layout--twocol-section {
+  align-items: center;
+}
+.programme-info-section .layout--twocol-section>.layout__region.column-33 {
+  width: 36.625%;
+  position: relative;
+  z-index: 1;
+}
+.programme-info-section .layout--twocol-section>.layout__region.column-67 {
+  width: 63.375%;
+}
+.ProgrammeInformation-Section {
+  background-color: #966C55;
+  padding: 50px 60px;
+  margin-bottom: 50px;
+}
+.ProgrammeInformation-Section h2 {
+  color: #fff;
+  margin-bottom: 30px;
+}
+.ProgrammeInformation-Section ul {
+  margin-bottom: 50px;
+}
+.ProgrammeInformation-Section ul li {
+  border-bottom: #CF9E84 1px solid;  
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+.ProgrammeInformation-Section ul li a {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.15;
+  display: block;
+  width: 100%;
+  padding: 5px 54px 5px 0;  
+  position: relative;
+}
+.ProgrammeInformation-Section ul li a::after {
+  background: #C0DE1A url(../image/icon/btn_arrow_black.svg) center center no-repeat;
+  border-radius: 50%;
+  content: '';
+  display: block;
+  width: 34px;
+  height: 34px;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: -5px;
+  transition: all 0.3s ease;
+}
+.ProgrammeInformation-Section ul li a:hover::after,
+.ProgrammeInformation-Section ul li a:focus::after {
+  opacity: 1;
+}
+.ProgrammeInformation-Section .ld-search-form p {
+  color: #fff;
+  margin-bottom: 0;
+}
+.ProgrammeInformation-Section .ld-search-form label {
+  display: block;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-bottom: 15px;
+}
+.ProgrammeInformation-Section .ld-search-form input {
+  background: #895D46 url(../image/icon/search_white.svg) right 10px center no-repeat;  
+  border: #fff 1px solid;
+  color: #fff;
+  line-height: 1.1875;
+  padding: 13px 46px 13px 18px;
+  width: 100%;
+}
+.ProgrammeInformation-Section .ld-search-form input::placeholder {
+  color: #fff; 
+  opacity: 1; 
+}
+.ProgrammeInformation-Section .ld-search-form p span  {
+  display: none;
+}
+.programme-info-section .layout--twocol-section>.layout__region.column-67 .field--type-image {
+  margin-left: -150px;  
+}
+
+/* Admission Information */
+.admission-info-section {
+  background-color: #EDF1EA;
+  padding-bottom: 100px;
+  position: relative;
+}
+.admission-info-section::before {
+  background: url(../image/content/admission_info_section_bg.webp) no-repeat;
+  background-size: cover;
+  content: '';
+  position: absolute;
+  inset: 0;
+  left: calc(100% - 410px);
+}
+.admission-info-section .layout--twocol-section {  
+  width: 100%;
+  padding-right: 25px;  
+}
+.admission-info-section .layout--twocol-section>.layout__region.column-33 {
+  width: min(35%, 590px);
+}
+.admission-info-section .layout--twocol-section>.layout__region.column-33 .block,
+.admission-info-section .layout--twocol-section>.layout__region.column-33 .block>div,
+.admission-info-section .layout--twocol-section>.layout__region.column-33 .block>div>div,
+.admission-info-section .layout--twocol-section>.layout__region.column-33 .block>div>div>div,
+.admission-info-section .layout--twocol-section>.layout__region.column-33 .block>div>div>div>div {
+  height: 100%;
+}
+.admission-info-section .layout--twocol-section>.layout__region.column-33 .block img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 40%;
+}
+.admission-info-section .layout--twocol-section>.layout__region.column-67 {
+  width: calc(100% - min(35%, 590px));
+  background-color: #fff;
+}
+.paragraph--type--admission-information {  
+  color: #282828;
+  padding: 50px 60px;
+}
+.paragraph--type--admission-information>.paragraph__column>.field--name-field-title {
+  color: #005D19;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  line-height: calc(100% + 10px);
+  margin-bottom: 20px;
+}
+.paragraph--type--admission-information>.paragraph__column>.field--name-field-text {
+  line-height: 1.75;
+  margin-bottom: 20px;
+}
+.paragraph--type--admission-information>.paragraph__column>.field--name-field-text ~ div:nth-child(3),
+.paragraph--type--admission-information>.paragraph__column>.field--name-field-text ~ div:nth-child(4) {  
+  background-color: #F0F0F0;
+  float: left;  
+  height: 200px;
+  width: 360px;
+  padding: 25px 28px;  
+  margin-bottom: 50px;
+}
+.paragraph--type--admission-information>.paragraph__column>.field--name-field-text ~ div:nth-child(3) {
+  margin-right: 20px;
+}
+.paragraph--type--admission-information>.paragraph__column>.field--name-field-text ~ div:nth-child(3)>.paragraph,
+.paragraph--type--admission-information>.paragraph__column>.field--name-field-text ~ div:nth-child(4)>.paragraph {
+  height: 100%;
+}
+.paragraph--type--admission-information>.paragraph__column>.field--name-field-text ~ div:nth-child(3)>.paragraph>.button-text,
+.paragraph--type--admission-information>.paragraph__column>.field--name-field-text ~ div:nth-child(4)>.paragraph>.button-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+.paragraph--type--admission-information>.paragraph__column>.field--name-field-text ~ div:nth-child(3) .field--name-field-title,
+.paragraph--type--admission-information>.paragraph__column>.field--name-field-text ~ div:nth-child(4) .field--name-field-title {
+  color: #005D19;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: calc(100% + 10px);
+}
+.paragraph--type--admission-information>.paragraph__column>.field--name-field-text ~ div:nth-child(3) .field--name-field-date,
+.paragraph--type--admission-information>.paragraph__column>.field--name-field-text ~ div:nth-child(4) .field--name-field-date {
+  font-size: 20px;  
+  line-height: calc(100% + 10px);
+}
+.paragraph--type--admission-information .paragraph--type--button a {
+  background-color: #F96339;  
+  color: #fff;
+  font-size: 20px;
+  line-height: 34px;
+  text-align: center;
+  display: block;
+  width: fit-content;  
+  padding: 8px 10px 8px 28px;
+  transition: all 0.3s ease;
+}
+.paragraph--type--admission-information .paragraph--type--button a::after {
+  background: url(../image/icon/btn_arrow_white.svg) right 20px center no-repeat;
+  content: '';
+  display: inline-block;
+  width: 34px;
+  height: 34px;
+  vertical-align: middle;
+  transition: all 0.3s ease;
+}
+.paragraph--type--admission-information .paragraph--type--button a:hover,
+.paragraph--type--admission-information .paragraph--type--button a:focus {
+  background-color: #C0DE1A;  
+  color: #282828;
+}
+.paragraph--type--admission-information .paragraph--type--button a::after {
+  background: url(../image/icon/btn_arrow_white.svg) center center no-repeat;
+  content: '';
+  display: inline-block;
+  width: 34px;
+  height: 34px;
+  vertical-align: middle;
+}
+.paragraph--type--admission-information .paragraph--type--button a:hover::after,
+.paragraph--type--admission-information .paragraph--type--button a:focus::after {
+  background: url(../image/icon/btn_arrow_black.svg) center center no-repeat;
+}
+
+/* Banner Section ***************************************************/
+.Banner-Section .layout__region--content {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  height: clamp(600px, 36.5vw, 700px);
+  padding: 50px;
+  position: relative;
+}
+.Banner-Section .layout__region--content .block-field-blocknodepagefield-banner .field--name-field-banner {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.Banner-Section .layout__region--content .block-field-blocknodepagefield-banner .field--name-field-banner::before {
+  background: linear-gradient(180deg, rgba(0, 145, 65, 0.00) 0%, rgba(0, 145, 65, 0.60) 75%);
+  content: '';
+  position: absolute;
+  inset: 0;
+  top: calc(100% - 300px);  
+}
+.Banner-Section .layout__region--content .block-field-blocknodepagefield-banner .field--name-field-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.Banner-Section .layout__region--content .field--name-title {  
+  line-height: 1.172;
+  color: #fff;  
+  margin-bottom: 10px;
+}
+.Banner-Section .layout__region--content .field--name-field-description {
+  color: #fff;
+  font-size: 24px;
+  line-height: calc(100% + 10px);
+  text-align: center;
+  max-width: 810px;
+}
+
+/* News &  Events ***************************************************/
+.view-block-news-events-list {
+
+}
+
 
 /**************************************************************/
 /* Media Query ************************************************/
@@ -641,6 +1165,24 @@ footer .navbar-nav .nav-item .dropdown-item:focus {
   .navbar-expand-lg .navbar-nav .nav-item:nth-child(2),
   .navbar-expand-lg .navbar-nav .nav-item:nth-last-child(2) {
     display: none;
+  }
+}
+@media screen and (min-width: 1490px) {
+  /* Homepage ***************************************************/
+  /* Highlights Section */
+  .highlights-section .content .left-content h2 {
+    padding-left: calc(100% - 720px);
+  }
+  .highlights-section .content .left-content .left-sub-content {
+    padding-left: calc(100% - 720px);
+  }
+  /* News Swiper */
+  .HomepageNews-Swiper {
+    margin-left: calc(50% - 720px);
+  }
+  /* Admission Information */
+  .admission-info-section .layout--twocol-section {
+    width: calc(50% + 745px);
   }
 }
 @media screen and (min-width: 1770px) {
@@ -654,12 +1196,26 @@ footer .navbar-nav .nav-item .dropdown-item:focus {
   }
   .imageCarouselSwiper .swiper-pagination-bullets {    
     left: calc(50% - 865px);
-  }  
+  }    
 }
 @media screen and (max-width: 1499px) {
   /* Header Navbar **********************************************/
   .navbar-expand-lg .navbar-nav .nav-item:not(:last-child) {
     margin-right: 14px;
+  }
+}
+@media screen and (max-width: 1399px) {
+  /* Homepage ***************************************************/
+  /* Programme Information */
+  .ProgrammeInformation-Section {
+    background-color: #966C55;
+    padding: 40px;
+    margin-bottom: 0;
+  }
+  /* Admission Information */
+  .paragraph--type--admission-information>.paragraph__column>.field--name-field-text ~ div:nth-child(3),
+  .paragraph--type--admission-information>.paragraph__column>.field--name-field-text ~ div:nth-child(4) {          
+    width: calc(50% - 10px);  
   }
 }
 @media screen and (max-width: 1299px) {
@@ -693,12 +1249,148 @@ footer .navbar-nav .nav-item .dropdown-item:focus {
   footer .navbar-nav .nav-item.dropdown {
     width: calc(25% - 40px);
   }
+  /* Homepage ***************************************************/
+  /* Highlights Section */
+  .highlights-section .content .left-content h2 {
+    padding-left: 20px;
+  }
+  .highlights-section .content .left-content .left-sub-content {
+    padding-left: 20px;
+  }
+  /* News & Events Section */
+  .view-block-homepage-news-events .view-header section {    
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  /* News Swiper */
+  .HomepageNews-Swiper {
+    margin-left: 20px;    
+  }
+  .HomepageNews-button .swiper-button-next {
+    right: 20px;
+  }
+  .HomepageNews-button .swiper-button-prev {      
+      right: 75px;
+  }  
+  /* Programme Information */
+  .programme-info-section .layout--twocol-section>.layout__region.column-67 .field--type-image {
+    margin-left: -100px;  
+  }
+  /* Admission Information */
+  .admission-info-section .layout--twocol-section {  
+    padding-right: 20px;  
+  }  
 }
 @media screen and (max-width: 991px) {
   /* Footer ***************************************************/  
   footer .navbar-nav .nav-item.dropdown {
     width: calc(33.33% - 26.667px);
   }
+  /* Homepage ***************************************************/
+  /* Highlights Section */  
+  .highlights-section {
+    padding-top: 0;    
+  }
+  .highlights-section::before {
+    content: none;
+  }
+  .highlights-section .content {
+    flex-direction: column-reverse;
+    padding-top: 122px;
+  }  
+  .highlights-section .content .left-content {
+    background: url(../image/content/highlights_section_bg.webp) 35px 0 no-repeat;
+    background-size: cover ;
+    width: 100%;    
+    padding-right: 20px;
+    padding-bottom: 50px;    
+  }  
+  .highlights-section .content .left-content .left-sub-content {
+    padding-right: 20px;
+    padding-bottom: 30px;
+  }
+  .highlightsLeftSwiper .swiper-slide h3 {
+    font-size: 20px;
+    line-height: 1.4;
+  }
+  .highlights-section .content .right-content {
+    width: 100%;
+    margin-bottom: 0;
+    padding-left: 20px;
+    padding-right: 20px;
+  }  
+  .highlights-section .content .left-content h2 {         
+    line-height: calc(100% + 6px);
+    margin: 0;    
+    padding-left: 20px;
+    position: absolute;
+    left: 0;
+    top: 50px;
+  }
+  .highlightsRightSwiper {
+    margin-left: 0;
+  }
+  /* News & Events Section */
+  .view-block-homepage-news-events {
+   padding-top: 80px;
+   padding-bottom: 50px; 
+  }
+  .view-block-homepage-news-events .view-header section h2 {
+    line-height: calc(100% + 6px);
+  }
+  /* Programme Information */
+  .programme-info-section {
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
+  .programme-info-section::before {
+    top: calc(68vw - 20px);
+    left: 20px;
+  }
+  .programme-info-section .layout--twocol-section {
+    flex-direction: column-reverse;
+  }
+  .programme-info-section .layout--twocol-section>.layout__region.column-33,
+  .programme-info-section .layout--twocol-section>.layout__region.column-67 {
+    width: 100%;
+  }    
+  .ProgrammeInformation-Section {
+    margin-left: -20px;
+    padding: 40px 20px;
+  }
+  .ProgrammeInformation-Section h2 {
+    line-height: calc(100% + 6px);
+  }  
+  .programme-info-section .layout--twocol-section>.layout__region.column-67 .field--type-image {
+    background-color: #fff;
+    margin-left: -20px;
+    margin-right: -20px;
+    padding-left: 20px;    
+  }
+  /* Admission Information */  
+  .admission-info-section {
+    padding-bottom: 50px;    
+  }
+  .admission-info-section::before {
+    left: 20px;
+  }
+  .admission-info-section .layout--twocol-section {
+    padding-right: 0;
+  } 
+  .admission-info-section .layout--twocol-section>.layout__region.column-33,
+  .admission-info-section .layout--twocol-section>.layout__region.column-67 {
+    width: 100%;
+  }
+  .admission-info-section .layout--twocol-section>.layout__region.column-33 .block img {
+    height: 460px;
+    object-position: 28% 70%;
+  }  
+  .paragraph--type--admission-information {
+    padding: 40px 20px;
+  }      
+  .paragraph--type--admission-information .paragraph--type--button a {
+    width: 100%;
+  }      
 }
 @media screen and (max-width: 767px) {
   /* Footer ***************************************************/  
@@ -736,6 +1428,32 @@ footer .navbar-nav .nav-item .dropdown-item:focus {
   .imageCarouselSwiper .swiper-pagination-bullets {
     bottom: 20px;
     left: 20px;
+  }
+  /* News & Events Section */
+  .view-block-homepage-news-events .view-header section {    
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 30px;
+  }
+  /* Admission Information */       
+  .admission-info-section .layout--twocol-section>.layout__region.column-33 .block img {    
+    height: 470px;
+  }
+  .paragraph--type--admission-information>.paragraph__column>.field--name-field-text ~ div:nth-child(3),
+  .paragraph--type--admission-information>.paragraph__column>.field--name-field-text ~ div:nth-child(4) {
+    float: none;
+    width: 100%;
+    height: 150px;
+  }  
+  .paragraph--type--admission-information>.paragraph__column>.field--name-field-text ~ div:nth-child(3) {
+    margin-bottom: 20px;
+    margin-right: 0;
+  }  
+}
+@media screen and (max-width: 379px) {
+  /* News Swiper */
+  .HomepageNews-Swiper {
+    margin-right: 20px;
   }
 }
 

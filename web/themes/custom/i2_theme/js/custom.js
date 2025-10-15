@@ -1,3 +1,37 @@
+// 全局 Google Maps 初始化函數
+function initGoogleMap() {
+  // 檢查是否存在地圖容器
+  var mapElement = document.getElementById("googleMap");
+  if (!mapElement) {
+    console.log("Google Map container not found");
+    return;
+  }
+
+  // 檢查 Google Maps API 是否已載入
+  if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+    console.log("Google Maps API not loaded");
+    return;
+  }
+
+  const myLatLng = { lat: 22.4694561, lng: 114.1893823 };
+  var mapProp = {
+    center: myLatLng,
+    zoom: 16,
+  };
+
+  try {
+    var map = new google.maps.Map(mapElement, mapProp);
+    new google.maps.Marker({
+      position: myLatLng,
+      map: map,
+      title: "General Office",
+    });
+    console.log("Google Map initialized successfully");
+  } catch (error) {
+    console.error("Error initializing Google Map:", error);
+  }
+}
+
 jQuery(function ($) {
   $(document).ready(function () {
 
@@ -24,9 +58,7 @@ jQuery(function ($) {
       }
       var swiperContainer = $(`
                 <div class="swiper imageCarouselSwiper">
-                    <div class="swiper-wrapper">
-
-                    </div>
+                    <div class="swiper-wrapper"></div>
                     <div class="swiper-button">
                       <div class="swiper-button-next imageCarouselSwiper-button-next-${i}"></div>
                       <div class="swiper-button-prev imageCarouselSwiper-button-prev-${i}"></div>
@@ -114,23 +146,25 @@ jQuery(function ($) {
               <section class="highlights-section">
                 <div class="content">
                   <div class="left-content">
-                    <h2>SES Highlights</h2>
-                    <div class="swiper highlightsLeftSwiper">
-                        <div class="swiper-wrapper">
+                      <h2>SES Highlights</h2>
+                      <div class="left-sub-content">
+                        <div class="swiper highlightsLeftSwiper">
+                            <div class="swiper-wrapper">
 
+                            </div>
+                            <div class="swiper-button">
+                              <div class="swiper-button-next highlightsLeftSwiper-button-next-${i}"></div>
+                              <div class="swiper-button-prev highlightsLeftSwiper-button-prev-${i}"></div>
+                              <div class="swiper-pagination highlightsLeftSwiper-pagination-${i}"></div>
+                            </div>
                         </div>
-                        <div class="swiper-button">
-                          <div class="swiper-button-next highlightsLeftSwiper-button-next-${i}"></div>
-                          <div class="swiper-button-prev highlightsLeftSwiper-button-prev-${i}"></div>
-                          <div class="swiper-pagination highlightsLeftSwiper-pagination-${i}"></div>
-                        </div>
-                    </div>
+                      </div>
                   </div>
                   <div class="right-content">
                     <div class="swiper highlightsRightSwiper">
-                        <div class="swiper-wrapper">
+                      <div class="swiper-wrapper">
 
-                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -211,11 +245,11 @@ jQuery(function ($) {
     var swiper = new Swiper(".HomepageNews-Swiper", {
       slidesPerView: 'auto',
       loop: true,
-      spaceBetween: 30,
-      pagination: {
-        el: ".HomepageNewsSwiper-pagination",
-        clickable: true,
-      },
+      spaceBetween: 27,
+      // pagination: {
+      //   el: ".HomepageNewsSwiper-pagination",
+      //   clickable: true,
+      // },
       navigation: {
         nextEl: ".HomepageNews-button-next",
         prevEl: ".HomepageNews-button-prev",
@@ -332,8 +366,7 @@ jQuery(function ($) {
     ////////////////////////////////////////////// 自動提交表單功能
     function bindAutoSubmitEvents() {
       // Tags 過濾器自動提交
-      $('.js-form-item-field-tags-target-id select').off('change.autoSubmit').on('change.autoSubmit', function() {
-        console.log('Tags filter changed, triggering submit button');
+      $('.js-form-item-field-tags-target-id select').off('change.autoSubmit').on('change.autoSubmit', function () {
         userSelectedTag = $(this).val(); // 保存用戶選擇
         var $form = $(this).closest('form');
         var $submitButton = $form.find('input[type="submit"], button[type="submit"]');
@@ -343,8 +376,7 @@ jQuery(function ($) {
       });
 
       // Year 過濾器自動提交
-      $('.js-form-item-field-years-target-id select, .years-select select').off('change.autoSubmit').on('change.autoSubmit', function() {
-        console.log('Year filter changed, triggering submit button');
+      $('.js-form-item-field-years-target-id select, .years-select select').off('change.autoSubmit').on('change.autoSubmit', function () {
         userSelectedYear = $(this).val(); // 保存用戶選擇
         var $form = $(this).closest('form');
         var $submitButton = $form.find('input[type="submit"], button[type="submit"]');
@@ -360,16 +392,189 @@ jQuery(function ($) {
     $('.view-block-newsletter-list .newsletter-card').each(function () {
       $(this).find('.card-download .file--application-pdf a').text('Download').attr('target', '_blank');
     });
+    ////////////////////////////////////////////// People list
+    $('.people-detail-right .people-detail-sdgs-icon').each(function () {
+      var $sdgsIcon = $(this);
+      var sdgsNumbers = $sdgsIcon.text().trim();
 
+      // 如果沒有數字，直接返回
+      if (!sdgsNumbers) {
+        return;
+      }
 
+      // 將數字字符串分割成數組，並去除空格
+      var numbers = sdgsNumbers.split(',').map(function (num) {
+        return num.trim();
+      });
 
+      // 創建 ul 容器
+      var $ul = $('<ul class="sdgs-icons-list"></ul>');
 
+      // 遍歷每個數字
+      numbers.forEach(function (number) {
+        // 在 SDGs 視圖中查找對應的 tid
+        var $matchingRow = $('.view-data-taxonomy-sdgs .views-row').filter(function () {
+          var tid = $(this).find('.views-field-tid .field-content').text().trim();
+          return tid === number;
+        });
 
+        // 如果找到匹配的行，獲取對應的圖片
+        if ($matchingRow.length > 0) {
+          var $img = $matchingRow.find('.views-field-field-icon img').clone();
+          if ($img.length > 0) {
+            // 創建 li 元素並添加圖片
+            var $li = $('<li class="sdgs-icon-item"></li>');
+            $li.append($img);
+            $ul.append($li);
+          }
+        }
+      });
 
-
-    $(document).ajaxComplete(function () {
-      $('.view-block-newsletter-list.view-display-id-block_1 .js-form-item-field-tags-target-id select option:nth-child(1)').text('All Categories');
+      // 如果創建了圖標列表，替換原來的文本內容
+      if ($ul.find('li').length > 0) {
+        $sdgsIcon.html($ul);
+      }
     });
+    $('.card-people').click(function () {
+      $('#peopleModal').find('.modal-body').html($(this).find('.card-data').html());
+      $('#peopleModal').modal('show');
+    });
+
+    // 關閉 modal 時清空 modal-body 內容
+    $('#peopleModal').on('hidden.bs.modal', function () {
+      $(this).find('.modal-body').empty();
+    });
+
+    // 檢查 URL hash 並自動顯示對應的 modal
+    function checkUrlHashAndShowModal() {
+      var hash = window.location.hash;
+      if (hash && hash.startsWith('#')) {
+        var id = hash.substring(1); // 移除 # 符號
+        var $matchingCard = $('.card-people[data-id="' + id + '"]');
+
+        if ($matchingCard.length > 0) {
+          // 找到匹配的卡片，顯示 modal
+          $('#peopleModal').find('.modal-body').html($matchingCard.find('.card-data').html());
+          $('#peopleModal').modal('show');
+        }
+      }
+    }
+
+    // 頁面載入時檢查 URL hash
+    checkUrlHashAndShowModal();
+
+    // 監聽 hash 變化
+    $(window).on('hashchange', function() {
+      checkUrlHashAndShowModal();
+    });
+
+    ////////////////////////////////////////////// Introduction page
+    $('.paragraph--type--ranked-item').each(function () {
+      var number = $(this).find('.field--name-field-number').text().trim();
+      var unit = $(this).find('.field--name-field-unit').text().trim();
+      var ranking_text = $(this).find('.field--name-field-about-ranking').html();
+      var new_content = `
+        <div class="stat-item">
+            <div class="counter" data-count="${number}">0</div>
+            <div class="counter-plus">${unit}</div>
+            <div class="stat-description">${ranking_text}</div>
+        </div>
+      `;
+      $(this).html(new_content);
+    });
+    // 純 JavaScript 動畫函數
+    function animateCounter(element, start, end, duration) {
+      const range = end - start;
+      const startTime = performance.now();
+
+      function updateCounter(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // 使用 easeOutCubic 緩動函數
+        const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+        const currentValue = Math.floor(start + (range * easeOutCubic));
+
+        element.textContent = currentValue.toLocaleString();
+
+        if (progress < 1) {
+          requestAnimationFrame(updateCounter);
+        }
+      }
+
+      requestAnimationFrame(updateCounter);
+    }
+
+    // Intersection Observer
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const counters = entry.target.querySelectorAll('.counter');
+
+          counters.forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-count'));
+            if (!isNaN(target)) {
+              animateCounter(counter, 0, target, 2500);
+            }
+          });
+
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.5,
+      rootMargin: '0px 0px -100px 0px'
+    });
+
+    // 延遲執行以確保 DOM 元素已創建
+    setTimeout(function () {
+      // 觀察所有包含計數器的容器
+      const counterContainers = document.querySelectorAll('.paragraph--type--ranked-item');
+      counterContainers.forEach(container => {
+        observer.observe(container);
+      });
+    }, 100);
+
+    ////////////////////////////////////////////// contact-us page
+    // 載入 Google Maps API
+    function loadGoogleMapsAPI() {
+      // 檢查是否已經載入
+      if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
+        initGoogleMap();
+        return;
+      }
+
+      // 檢查是否已經有腳本標籤
+      if (document.querySelector('script[src*="maps.googleapis.com"]')) {
+        return;
+      }
+
+      var script = document.createElement("script");
+      script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDFb7pxsOp-yrPwdr973Ezo3RWlqNimX4M&callback=initGoogleMap";
+      script.async = true;
+      script.defer = true;
+      script.onerror = function() {
+        console.error("Failed to load Google Maps API");
+      };
+
+      document.head.appendChild(script);
+    }
+
+    // 當頁面載入完成後載入地圖
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadGoogleMapsAPI);
+    } else {
+      loadGoogleMapsAPI();
+    }
+    ////////////////////////////////////////////// Knowledge Transfer page
+    $('.paragraph--type--common-button').each(function () {
+      var color_type = $(this).find('.field--name-field-common-button-type').text().trim();
+      if(color_type) {
+        $(this).addClass('button-' + color_type);
+      }
+    });
+
+
     ////////////////////////////////////////////// 監聽 AJAX 完成事件
     $(document).ajaxComplete(function () {
       // News && Events list

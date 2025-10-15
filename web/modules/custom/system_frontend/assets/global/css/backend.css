@@ -1,5 +1,6 @@
 /* system CSS ------------------------------------------------------------------------------*/
 @media screen and (min-width: 61rem) {
+
   body .layout-region--node-main,
   body .layout-region--node-footer,
   body .layout-region--main,
@@ -60,6 +61,10 @@ body.user-logged-in header {
 /* backend CSS ------------------------------------------------------------------------------*/
 body.page-node-type-page.homepage-edit-page .field--name-field-details-paragraphs,
 body.page-node-type-page.homepage-edit-page #edit-group-banner-section,
-body.page-node-type-page:not(.homepage-edit-page) .field--name-field-homepage-details-paragraph {
+.field--name-field-homepage-details-paragraph {
   display: none;
+}
+
+body.page-node-type-page.homepage-edit-page .field--name-field-homepage-details-paragraph {
+  display: block;
 }

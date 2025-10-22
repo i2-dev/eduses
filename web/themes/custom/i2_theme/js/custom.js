@@ -3,13 +3,13 @@ function initGoogleMap() {
   // 檢查是否存在地圖容器
   var mapElement = document.getElementById("googleMap");
   if (!mapElement) {
-    console.log("Google Map container not found");
+    // console.log("Google Map container not found");
     return;
   }
 
   // 檢查 Google Maps API 是否已載入
   if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
-    console.log("Google Maps API not loaded");
+    // console.log("Google Maps API not loaded");
     return;
   }
 
@@ -26,7 +26,7 @@ function initGoogleMap() {
       map: map,
       title: "General Office",
     });
-    console.log("Google Map initialized successfully");
+    // console.log("Google Map initialized successfully");
   } catch (error) {
     console.error("Error initializing Google Map:", error);
   }
@@ -45,7 +45,56 @@ jQuery(function ($) {
         $('body').removeClass('scroll-fixed');
       }
     });
+    ////////////////////////////////////////////// back to top
+    $(window).scroll(function () {
+      if ($(this).scrollTop() > 1000) {
+        $('#block-i2-theme-backtotop').css('opacity', '1');
+      } else {
+        $('#block-i2-theme-backtotop').css('opacity', '0');
+      }
+    });
+    $('.sidebar-back-to-top').click(function () {
+      $('body,html').animate({
+        scrollTop: 0
+      }, 200);
+      return false;
+    });
+    ////////////////////////////////////////////// header menu
+    $('#block-i2-theme-main-navigation > ul.navbar-nav > li.nav-item.dropdown').each(function () {
+      var $li = $(this);
+      if ($li.hasClass('nav-item-processed')) {
+        return;
+      }
+      var $toggle = $li.children('a.nav-link.dropdown-toggle');
+      var $ul = $li.children('ul.dropdown-menu.nav-level-1');
+      if ($toggle.length === 0 || $ul.length === 0) {
+        $li.addClass('nav-item-processed');
+        return;
+      }
 
+      // 構建新的包裹結構：
+      var titleText = $toggle.text().trim();
+      var $wrapper = $('<div class="nav-mega"></div>');
+      var $titleDiv = $('<div class="nav-mega-title"></div>');
+      var $titleLink = $('<a class="nav-mega-title-link"></a>')
+        .attr('href', $toggle.attr('href') || '#')
+        .attr('title', $toggle.attr('title') || titleText)
+        .text(titleText);
+      if ($toggle.attr('target')) { $titleLink.attr('target', $toggle.attr('target')); }
+      if ($toggle.attr('rel')) { $titleLink.attr('rel', $toggle.attr('rel')); }
+      $titleDiv.append($titleLink);
+      var $bodyDiv = $('<div class="nav-mega-body"></div>');
+
+      // 克隆原有的 ul 內容到新容器內，原結構保持不變
+      var $ulClone = $ul.clone(true, true);
+      $bodyDiv.append($ulClone);
+      $wrapper.append($titleDiv).append($bodyDiv);
+
+      // 將新的 dropdown-menu 插入到原 ul 之前，讓 Bootstrap 使用新的容器
+      $ul.before($wrapper);
+
+      $li.addClass('nav-item-processed');
+    });
     ////////////////////////////////////////////// 獲取當前年份
     $('#year_time').text(new Date().getFullYear());
     ////////////////////////////////////////////// homepage image carousel paragraphs
@@ -205,6 +254,40 @@ jQuery(function ($) {
       // 先聲明變量
       var highlightsLeftswiper, highlightsRightSwiper;
 
+      // Function to pause all videos in a container
+      function pauseAllVideos(container) {
+        // Pause HTML5 videos
+        container.find('video').each(function() {
+          this.pause();
+        });
+
+        // Force stop YouTube videos by reloading iframe
+        container.find('iframe[src*="youtube.com"], iframe[src*="youtu.be"]').each(function() {
+          var iframe = this;
+          var src = iframe.src;
+
+          // First try postMessage
+          try {
+            iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+            iframe.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*');
+          } catch (e) {
+            // If postMessage fails, force reload iframe
+            iframe.src = '';
+            setTimeout(function() {
+              iframe.src = src;
+            }, 50);
+          }
+
+          // Force reload iframe to completely stop YouTube video
+          setTimeout(function() {
+            iframe.src = '';
+            setTimeout(function() {
+              iframe.src = src;
+            }, 100);
+          }, 100);
+        });
+      }
+
       // Initialize left swiper
       highlightsLeftswiper = new Swiper(highlightsContainer.find('.highlightsLeftSwiper')[0], {
         loop: true,
@@ -225,6 +308,8 @@ jQuery(function ($) {
             if (highlightsRightSwiper) {
               highlightsRightSwiper.slideTo(this.activeIndex);
             }
+            // Pause all videos when left swiper changes
+            pauseAllVideos(highlightsContainer.find('.highlightsRightSwiper'));
           }
         }
       });
@@ -237,9 +322,12 @@ jQuery(function ($) {
             if (highlightsLeftswiper) {
               highlightsLeftswiper.slideTo(this.activeIndex);
             }
+            // Pause all videos when right swiper changes
+            pauseAllVideos(highlightsContainer.find('.highlightsRightSwiper'));
           }
         }
       });
+
     });
     ////////////////////////////////////////////// homepage news events swiper
     var swiper = new Swiper(".HomepageNews-Swiper", {
@@ -273,7 +361,40 @@ jQuery(function ($) {
     });
     ////////////////////////////////////////////// News && Events list
     $('.view-block-news-events-list.view-display-id-block_1 .js-form-item-field-tags-target-id select option:nth-child(1)').text('All Categories');
+    $('.new-list-card').each(function () {
+      var $cardDate = $(this).find('.card-date');
+      var dateText = $cardDate.text().trim();
 
+      // 处理日期字符串，拆分成span元素
+      if (dateText) {
+        // 检查是否包含 "-" 分隔符
+        if (dateText.includes(' - ')) {
+          // 如果有两个日期，拆分成两个span
+          var dates = dateText.split(' - ');
+          var date1 = dates[0].trim();
+          var date2 = dates[1].trim();
+
+          // 检查两个日期是否相同
+          if (date1 === date2) {
+            // 如果两个日期相同，只显示一个日期
+            $cardDate.html('<span class="date-item">' + date1 + '</span>');
+          } else {
+            // 如果两个日期不同，显示两个日期
+            var newHtml = '';
+            dates.forEach(function (date, index) {
+              newHtml += '<span class="date-item">' + date.trim() + '</span>';
+              if (index < dates.length - 1) {
+                newHtml += ' <span class="date-separator">-</span> ';
+              }
+            });
+            $cardDate.html(newHtml);
+          }
+        } else {
+          // 如果只有一个日期，包装在一个span中
+          $cardDate.html('<span class="date-item">' + dateText + '</span>');
+        }
+      }
+    });
     // 提取年份數據，去重並排序
     function extractAndSortYears() {
       // 獲取所有 .field-content 元素中的文本內容
@@ -318,7 +439,7 @@ jQuery(function ($) {
     var initialYear = getUrlParameter('field_years_value');
     if (initialYear && yearArray.includes(parseInt(initialYear))) {
       $('.years-select select').val(initialYear);
-      console.log('Initial year set to:', initialYear);
+      // console.log('Initial year set to:', initialYear);
       // 應用初始過濾
       filterNewsByYear(initialYear);
     } else {
@@ -331,7 +452,7 @@ jQuery(function ($) {
     // 添加年份選擇事件處理器
     $('.years-select select').on('change', function () {
       var selectedYear = $(this).val();
-      console.log('Selected year:', selectedYear);
+      // console.log('Selected year:', selectedYear);
 
       // 更新視覺上的活躍狀態
       $('.years-select select option').removeClass('active');
@@ -435,13 +556,13 @@ jQuery(function ($) {
         $sdgsIcon.html($ul);
       }
     });
-    $('.card-people').click(function () {
-      $('#peopleModal').find('.modal-body').html($(this).find('.card-data').html());
-      $('#peopleModal').modal('show');
+    $('.cardModal').click(function () {
+      $('#edusesModal').find('.modal-body').html($(this).find('.card-data').html());
+      $('#edusesModal').modal('show');
     });
 
     // 關閉 modal 時清空 modal-body 內容
-    $('#peopleModal').on('hidden.bs.modal', function () {
+    $('#edusesModal').on('hidden.bs.modal', function () {
       $(this).find('.modal-body').empty();
     });
 
@@ -450,12 +571,12 @@ jQuery(function ($) {
       var hash = window.location.hash;
       if (hash && hash.startsWith('#')) {
         var id = hash.substring(1); // 移除 # 符號
-        var $matchingCard = $('.card-people[data-id="' + id + '"]');
+        var $matchingCard = $('.cardModal[data-id="' + id + '"]');
 
         if ($matchingCard.length > 0) {
           // 找到匹配的卡片，顯示 modal
-          $('#peopleModal').find('.modal-body').html($matchingCard.find('.card-data').html());
-          $('#peopleModal').modal('show');
+          $('#edusesModal').find('.modal-body').html($matchingCard.find('.card-data').html());
+          $('#edusesModal').modal('show');
         }
       }
     }
@@ -464,11 +585,22 @@ jQuery(function ($) {
     checkUrlHashAndShowModal();
 
     // 監聽 hash 變化
-    $(window).on('hashchange', function() {
+    $(window).on('hashchange', function () {
       checkUrlHashAndShowModal();
     });
 
     ////////////////////////////////////////////// Introduction page
+    //Learning and Teaching
+    setTimeout(function () {
+      $('.IntroductionProgrammes').each(function () {
+        var title = $(this).find('>.paragraph>.paragraph__column>h2').text().trim();
+        $(this).find('>.paragraph>.paragraph__column>h2').hide();
+        if (title) {
+          $(this).find('>.paragraph>.paragraph__column>nav').prepend('<h2>' + title + '</h2>');
+        }
+      });
+    }, 200);
+    //About SES
     $('.paragraph--type--ranked-item').each(function () {
       var number = $(this).find('.field--name-field-number').text().trim();
       var unit = $(this).find('.field--name-field-unit').text().trim();
@@ -553,7 +685,7 @@ jQuery(function ($) {
       script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDFb7pxsOp-yrPwdr973Ezo3RWlqNimX4M&callback=initGoogleMap";
       script.async = true;
       script.defer = true;
-      script.onerror = function() {
+      script.onerror = function () {
         console.error("Failed to load Google Maps API");
       };
 
@@ -569,16 +701,61 @@ jQuery(function ($) {
     ////////////////////////////////////////////// Knowledge Transfer page
     $('.paragraph--type--common-button').each(function () {
       var color_type = $(this).find('.field--name-field-common-button-type').text().trim();
-      if(color_type) {
+      if (color_type) {
         $(this).addClass('button-' + color_type);
       }
     });
 
-
+    ////////////////////////////////////////////// News & Events page
+    $('.page-node-type-news-events').each(function () {
+      // 判斷圖片元素不存在的情況
+      if ($(this).find('.block-field-blocknodenews-eventsfield-images img').length === 0 && $(this).find('.block-field-blocknodenews-eventsfield-default-images').length > 0) {
+        var default_image = $(this).find('.block-field-blocknodenews-eventsfield-default-images .field--name-field-default-images').text().trim();
+        $(this).find('.block-field-blocknodenews-eventsfield-default-images').html(`
+            <img src="${'/themes/custom/i2_theme/image/default/' + default_image + '.jpg'}" alt="">
+          `).show();
+      }
+    });
     ////////////////////////////////////////////// 監聽 AJAX 完成事件
     $(document).ajaxComplete(function () {
       // News && Events list
       $('.view-block-news-events-list.view-display-id-block_1 .js-form-item-field-tags-target-id select option:nth-child(1)').text('All Categories');
+
+      // 重新处理日期字符串（AJAX更新后）
+      $('.new-list-card').each(function () {
+        var $cardDate = $(this).find('.card-date');
+        var dateText = $cardDate.text().trim();
+
+        // 处理日期字符串，拆分成span元素
+        if (dateText) {
+          // 检查是否包含 "-" 分隔符
+          if (dateText.includes(' - ')) {
+            // 如果有两个日期，拆分成两个span
+            var dates = dateText.split(' - ');
+            var date1 = dates[0].trim();
+            var date2 = dates[1].trim();
+
+            // 检查两个日期是否相同
+            if (date1 === date2) {
+              // 如果两个日期相同，只显示一个日期
+              $cardDate.html('<span class="date-item">' + date1 + '</span>');
+            } else {
+              // 如果两个日期不同，显示两个日期
+              var newHtml = '';
+              dates.forEach(function (date, index) {
+                newHtml += '<span class="date-item">' + date.trim() + '</span>';
+                if (index < dates.length - 1) {
+                  newHtml += ' <span class="date-separator">-</span> ';
+                }
+              });
+              $cardDate.html(newHtml);
+            }
+          } else {
+            // 如果只有一个日期，包装在一个span中
+            $cardDate.html('<span class="date-item">' + dateText + '</span>');
+          }
+        }
+      });
 
       // 重新創建年份選擇器（如果被AJAX覆蓋了）
       if ($('.years-select').length === 0) {
@@ -619,6 +796,7 @@ jQuery(function ($) {
 
       // 重新綁定自動提交事件（AJAX更新後）
       bindAutoSubmitEvents();
+
     });
 
 

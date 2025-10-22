@@ -4,6 +4,7 @@ global-styling:
     theme:
       css/style.css: {}
       css/loader.css: {}
+      css/photo-sphere-viewer.css: {}
       css/swiper-bundle.min.css: {}
       css/aos.css: {}
       css/i2-system.css: {}
@@ -12,10 +13,12 @@ global-styling:
   js:
     js/loader.js: {}
     js/swiper-bundle.min.js: {}
+    js/three.min.js: {}
+    js/photo-sphere-viewer.js: {}
     js/i2-system.js: {}
     js/i2.js: {}
     js/aos.js: {}
     js/bootstrap-system.js: {}
     js/custom.js: {}
   dependencies:
-  - core/jquery
+    - core/jquery

@@ -43,7 +43,7 @@
  */
 #}
 {%
-set nav_classes = 'navbar navbar-expand-lg' ~
+set nav_classes = 'navbar navbar-expand-xl' ~
   (b5_navbar_schema != 'none' ? " navbar-#{b5_navbar_schema}" : ' ') ~
   (b5_navbar_schema != 'none' ? (b5_navbar_schema == 'dark' ? ' text-light' : ' text-dark' ) : ' ') ~
   (b5_navbar_bg_schema != 'none' ? " bg-#{b5_navbar_bg_schema}" : ' ')
@@ -64,15 +64,17 @@ set footer_classes = ' ' ~
       {{ page.nav_branding }}
 
       {% if page.nav_main or page.nav_additional %}
-        <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        <button class="navbar-toggler collapsed" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                 aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          {{ page.nav_main }}
-          {{ page.nav_additional }}
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="navbarSupportedContent">
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          <div class="offcanvas-body">
+            {{ page.nav_main }}
+            {{ page.nav_additional }}
+          </div>
         </div>
       {% endif %}
     </div>
@@ -121,9 +123,9 @@ set footer_classes = ' ' ~
 </main>
 
 {% if page.footer %}
-<footer role="contentinfo" class="mt-auto {{ footer_classes }}">    
+<footer role="contentinfo" class="mt-auto {{ footer_classes }}">
   {{ page.footer }}
-  {{ page.footer_bottom }}    
+  {{ page.footer_bottom }}
 </footer>
 {% endif %}
 

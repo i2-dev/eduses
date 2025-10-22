@@ -91,24 +91,29 @@ content.bp_padding[0]['#markup'] ? content.bp_padding[0]['#markup'],
 			{# Loops through the tab sections again to print the tab section bodies. #}
 			{% for key, item in content.bp_tab_section|filter((value, key) => key|first != '#') %}
 				<div role="tabpanel" class="tab-pane {% if loop.first %}active show{% endif %}" id="{{ paragraph_id }}-{{ key + 1 }}">
-					{% for body_key, body_item in item['#paragraph'].bp_tab_section_body %}
-						{# Use the same render array as item and set the '#paragraph'. #}
-						{% set section_body = item %}
-						{% set lang = section_body['#paragraph'].langcode[0].value %}
-						{# Check if a translation exists #}
-						{% if section_body['#paragraph'].bp_tab_section_body[body_key].entity.hasTranslation(lang) %}
-							{# Load the entity for the current translation #}
-							{% set section_translation= section_body['#paragraph'].bp_tab_section_body[body_key].entity.getTranslation(lang) %}
-						{% else %}
-							{# Load the source entity #}
-							{% set section_translation= section_body['#paragraph'].bp_tab_section_body[body_key].entity %}
-						{% endif %}
-						{% set section_body = section_body|merge({'#paragraph': section_translation}) %}
-						{# Remove the cache keys so it doesn't repeat the first value. #}
-						{% set section_body = section_body|merge({'#cache': {}}) %}
-						{# Print the compiled section body. #}
-						{{ section_body }}
-					{% endfor %}
+					<div class="tab-content-wrapper">
+						<h3 class="tab-title">{{ item['#paragraph'].bp_tab_section_title.value }}</h3>
+						<div class="tab-body">
+							{% for body_key, body_item in item['#paragraph'].bp_tab_section_body %}
+								{# Use the same render array as item and set the '#paragraph'. #}
+								{% set section_body = item %}
+								{% set lang = section_body['#paragraph'].langcode[0].value %}
+								{# Check if a translation exists #}
+								{% if section_body['#paragraph'].bp_tab_section_body[body_key].entity.hasTranslation(lang) %}
+									{# Load the entity for the current translation #}
+									{% set section_translation= section_body['#paragraph'].bp_tab_section_body[body_key].entity.getTranslation(lang) %}
+								{% else %}
+									{# Load the source entity #}
+									{% set section_translation= section_body['#paragraph'].bp_tab_section_body[body_key].entity %}
+								{% endif %}
+								{% set section_body = section_body|merge({'#paragraph': section_translation}) %}
+								{# Remove the cache keys so it doesn't repeat the first value. #}
+								{% set section_body = section_body|merge({'#cache': {}}) %}
+								{# Print the compiled section body. #}
+								{{ section_body }}
+							{% endfor %}
+						</div>
+					</div>
 				</div>
 			{% endfor %}
 		</div>

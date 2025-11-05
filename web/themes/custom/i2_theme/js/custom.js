@@ -59,6 +59,48 @@ jQuery(function ($) {
       }, 200);
       return false;
     });
+    ////////////////////////////////////////////// menu url add target="_blank"
+    function isExternalUrl(href) {
+      try {
+        var url = new URL(href, window.location.origin);
+        return url.origin !== window.location.origin;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function setExternalLinkTargets() {
+      $('#block-i2-theme-main-navigation, #block-i2-theme-mainnavigation, footer')
+        .find('a.nav-link, a.dropdown-item, a.nav-mega-title-link')
+        .each(function () {
+          var $a = $(this);
+          var href = $a.attr('href');
+          if (href && isExternalUrl(href)) {
+            $a.attr('target', '_blank');
+            // 安全性：為新開視窗的外部連結添加 rel
+            if (!$a.attr('rel')) {
+              $a.attr('rel', 'noopener');
+            }
+          }
+        });
+    }
+
+    // 初始設置（在 mega 菜單構建之前先執行一次）
+    setExternalLinkTargets();
+    ////////////////////////////////////////////// header special menu
+    $('footer .navbar-nav.nav-level-0>li.nav-item').each(function () {
+      var $li = $(this);
+      if ($li.find('>a.nav-link').text().trim() === $('.about-ses-dropdown>button.dropdown-toggle').text().trim()) {
+        var ul_menu = $li.find('>ul.dropdown-menu').html();
+        $('.about-ses-dropdown>ul.dropdown-menu').html(ul_menu);
+      } else if ($li.find('>a.nav-link').text().trim() === $('.people-dropdown>button.dropdown-toggle').text().trim()) {
+        var ul_menu = $li.find('>ul.dropdown-menu').html();
+        $('.people-dropdown>ul.dropdown-menu').html(ul_menu);
+      } else if ($li.find('>a.nav-link').text().trim() === $('.news-dropdown>button.dropdown-toggle').text().trim()) {
+        var ul_menu = $li.find('>ul.dropdown-menu').html();
+        $('.news-dropdown>ul.dropdown-menu').html(ul_menu);
+      } else { }
+    });
     ////////////////////////////////////////////// header menu
     $('#block-i2-theme-main-navigation > ul.navbar-nav > li.nav-item.dropdown').each(function () {
       var $li = $(this);
@@ -94,6 +136,8 @@ jQuery(function ($) {
       $ul.before($wrapper);
 
       $li.addClass('nav-item-processed');
+      // 構建完成後，確保克隆出的連結也正確設置 target
+      setExternalLinkTargets();
     });
     ////////////////////////////////////////////// 獲取當前年份
     $('#year_time').text(new Date().getFullYear());
@@ -257,12 +301,12 @@ jQuery(function ($) {
       // Function to pause all videos in a container
       function pauseAllVideos(container) {
         // Pause HTML5 videos
-        container.find('video').each(function() {
+        container.find('video').each(function () {
           this.pause();
         });
 
         // Force stop YouTube videos by reloading iframe
-        container.find('iframe[src*="youtube.com"], iframe[src*="youtu.be"]').each(function() {
+        container.find('iframe[src*="youtube.com"], iframe[src*="youtu.be"]').each(function () {
           var iframe = this;
           var src = iframe.src;
 
@@ -273,15 +317,15 @@ jQuery(function ($) {
           } catch (e) {
             // If postMessage fails, force reload iframe
             iframe.src = '';
-            setTimeout(function() {
+            setTimeout(function () {
               iframe.src = src;
             }, 50);
           }
 
           // Force reload iframe to completely stop YouTube video
-          setTimeout(function() {
+          setTimeout(function () {
             iframe.src = '';
-            setTimeout(function() {
+            setTimeout(function () {
               iframe.src = src;
             }, 100);
           }, 100);
@@ -325,6 +369,51 @@ jQuery(function ($) {
             // Pause all videos when right swiper changes
             pauseAllVideos(highlightsContainer.find('.highlightsRightSwiper'));
           }
+        }
+      });
+
+      // 添加狀態變量來追蹤輪播狀態
+      var isAutoplayPaused = false;
+
+      // 添加點擊事件來切換輪播狀態
+      highlightsContainer.find('.highlightsRightSwiper').on('click', function () {
+        if (isAutoplayPaused) {
+          // 如果已暫停，則恢復輪播
+          if (highlightsLeftswiper && highlightsLeftswiper.autoplay) {
+            highlightsLeftswiper.autoplay.start();
+          }
+          isAutoplayPaused = false;
+        } else {
+          // 如果正在輪播，則停止
+          if (highlightsLeftswiper && highlightsLeftswiper.autoplay) {
+            highlightsLeftswiper.autoplay.stop();
+          }
+          isAutoplayPaused = true;
+        }
+      });
+
+      // 添加手動操作後恢復輪播的事件監聽器
+      // 觸摸/滑動事件
+      highlightsContainer.find('.highlightsLeftSwiper').on('touchstart touchmove touchend', function () {
+        if (isAutoplayPaused && highlightsLeftswiper && highlightsLeftswiper.autoplay) {
+          highlightsLeftswiper.autoplay.start();
+          isAutoplayPaused = false;
+        }
+      });
+
+      // 按鈕點擊事件
+      highlightsContainer.find('.highlightsLeftSwiper .swiper-button-next, .highlightsLeftSwiper .swiper-button-prev').on('click', function () {
+        if (isAutoplayPaused && highlightsLeftswiper && highlightsLeftswiper.autoplay) {
+          highlightsLeftswiper.autoplay.start();
+          isAutoplayPaused = false;
+        }
+      });
+
+      // 分頁點擊事件
+      highlightsContainer.find('.highlightsLeftSwiper .swiper-pagination-bullet').on('click', function () {
+        if (isAutoplayPaused && highlightsLeftswiper && highlightsLeftswiper.autoplay) {
+          highlightsLeftswiper.autoplay.start();
+          isAutoplayPaused = false;
         }
       });
 
@@ -395,11 +484,48 @@ jQuery(function ($) {
         }
       }
     });
+
+    // 处理 .page-node-type-news-events .field--name-field-date 的日期格式
+    $('.page-node-type-news-events .field--name-field-date').each(function () {
+      var $fieldDate = $(this);
+      var dateText = $fieldDate.text().trim();
+
+      // 处理日期字符串，拆分成span元素
+      if (dateText) {
+        // 检查是否包含 "-" 分隔符
+        if (dateText.includes(' - ')) {
+          // 如果有两个日期，拆分成两个span
+          var dates = dateText.split(' - ');
+          var date1 = dates[0].trim();
+          var date2 = dates[1].trim();
+
+          // 检查两个日期是否相同
+          if (date1 === date2) {
+            // 如果两个日期相同，只显示一个日期
+            $fieldDate.html('<span class="date-item">' + date1 + '</span>');
+          } else {
+            // 如果两个日期不同，显示两个日期
+            var newHtml = '';
+            dates.forEach(function (date, index) {
+              newHtml += '<span class="date-item">' + date.trim() + '</span>';
+              if (index < dates.length - 1) {
+                newHtml += ' <span class="date-separator">-</span> ';
+              }
+            });
+            $fieldDate.html(newHtml);
+          }
+        } else {
+          // 如果只有一个日期，包装在一个span中
+          $fieldDate.html('<span class="date-item">' + dateText + '</span>');
+        }
+      }
+    });
+
     // 提取年份數據，去重並排序
     function extractAndSortYears() {
       // 獲取所有 .field-content 元素中的文本內容
       var yearTexts = [];
-      $('.view-data-news-events-year .field-content').each(function () {
+      $('.block-views-blockdata-news-events-year-block-1 .view-data-news-events-year .field-content').each(function () {
         var text = $(this).text().trim();
         if (text && !isNaN(text)) {
           yearTexts.push(parseInt(text));
@@ -415,10 +541,9 @@ jQuery(function ($) {
     };
     // 調用函數
     var yearArray = extractAndSortYears();
-    $('.view-block-news-events-list.view-display-id-block_1 .js-form-item-field-years-value').before(`
-        <div class="years-select js-form-item form-item js-form-type-select form-type-select js-form-item-field-years-target-id form-item-field-years-value" >
-          <label for="edit-field-years-value">Year</label>
-          <select data-drupal-selector="edit-field-years-value" name="field_years_value" class="form-select form-control" id="edit-field-years-value">
+    $('.block-views-blockblock-news-events-list-block-1 .js-form-item-field-date-value').before(`
+        <div class="years-select js-form-item form-item js-form-type-select form-type-select js-form-item-field-date-target-id form-item-field-date-value" >
+          <select data-drupal-selector="edit-field-date-value" name="field_date_value" class="form-select form-control" id="edit-field-date-value">
 
           </select>
         </div>
@@ -509,6 +634,23 @@ jQuery(function ($) {
 
     // 初始綁定事件
     bindAutoSubmitEvents();
+    // news-events image url
+    $('.page-node-type-news-events').each(function () {
+      if ($(this).find('.block-field-blocknodenews-eventsfield-image-url').length > 0) {
+        var imageUrl = $(this).find('.block-field-blocknodenews-eventsfield-image-url .field--name-field-image-url').text().trim();
+        if (imageUrl) {
+          $(this).find('.block-field-blocknodenews-eventsfield-image-url').html(`
+            <div class="block block-layout-builder block-field-blocknodenews-eventsfield-images" >
+              <div class="field field--name-field-images field--type-entity-reference field--label-hidden field__items">
+                  <div class="field__item" >
+                    <img loading="lazy" src="${imageUrl}"  class="img-fluid">
+                  </div>
+              </div>
+            </div>
+          `);
+        }
+      }
+    });
     ////////////////////////////////////////////// Newsletter list
     $('.view-block-newsletter-list .newsletter-card').each(function () {
       $(this).find('.card-download .file--application-pdf a').text('Download').attr('target', '_blank');
@@ -588,6 +730,124 @@ jQuery(function ($) {
     $(window).on('hashchange', function () {
       checkUrlHashAndShowModal();
     });
+
+    // People page: clicking .people-staff-section items expands corresponding section
+    (function bindPeopleStaffSectionNavigation() {
+      var $nav = $('.people-staff-section');
+      if ($nav.length === 0) return;
+
+      $nav.off('click.peopleNav', 'a').on('click.peopleNav', 'a', function (e) {
+        var $a = $(this);
+        var title = $a.text().trim();
+        if (!title) return;
+
+        // Find the matching view header by heading text (more reliable than id, avoids duplicate ids)
+        var $header = $('.view.view-block-people-list .view-header h2').filter(function () {
+          return $(this).text().trim() === title;
+        }).first().closest('.view-header');
+
+        if ($header.length === 0) return;
+
+        // Expand the associated collapse
+        var targetSelector = $header.attr('data-bs-target');
+        if (!targetSelector) return;
+        var $collapse = $(targetSelector);
+        if ($collapse.length === 0) return;
+
+        try {
+          if (typeof bootstrap !== 'undefined' && bootstrap.Collapse && typeof bootstrap.Collapse.getOrCreateInstance === 'function') {
+            var instance = bootstrap.Collapse.getOrCreateInstance($collapse[0], { toggle: false });
+            instance.show();
+          } else if (typeof $collapse.collapse === 'function') {
+            $collapse.collapse('show');
+          } else {
+            $collapse.addClass('show');
+            $header.attr('aria-expanded', 'true');
+          }
+        } catch (err) {
+          // Fallback to adding classes if Bootstrap API call fails
+          $collapse.addClass('show');
+          $header.attr('aria-expanded', 'true');
+        }
+
+        // Smooth scroll to the header
+        $('html, body').animate({ scrollTop: Math.max(0, $header.offset().top - 180) }, 300);
+
+        // Prevent default to avoid jumping to duplicate/incorrect anchors
+        e.preventDefault();
+      });
+    })();
+
+    // Auto-open and scroll to people section when arriving with a hash (e.g. #Advisor)
+    (function autoOpenPeopleSectionFromHash() {
+      var $nav = $('.people-staff-section');
+      var $peopleHeaders = $('.view.view-block-people-list .view-header');
+      if ($peopleHeaders.length === 0) return;
+
+      function openByHeader($header) {
+        if ($header.length === 0) return;
+        var targetSelector = $header.attr('data-bs-target');
+        if (!targetSelector) return;
+        var $collapse = $(targetSelector);
+        if ($collapse.length === 0) return;
+        try {
+          if (typeof bootstrap !== 'undefined' && bootstrap.Collapse && typeof bootstrap.Collapse.getOrCreateInstance === 'function') {
+            var instance = bootstrap.Collapse.getOrCreateInstance($collapse[0], { toggle: false });
+            instance.show();
+          } else if (typeof $collapse.collapse === 'function') {
+            $collapse.collapse('show');
+          } else {
+            $collapse.addClass('show');
+            $header.attr('aria-expanded', 'true');
+          }
+        } catch (err) {
+          $collapse.addClass('show');
+          $header.attr('aria-expanded', 'true');
+        }
+        $('html, body').animate({ scrollTop: Math.max(0, $header.offset().top - 100) }, 300);
+      }
+
+      function handleHash(rawHash) {
+        if (!rawHash) return;
+        var id = decodeURIComponent(rawHash.replace(/^#/, ''));
+        if (!id) return;
+
+        // 1) Try: find matching nav link by hash and reuse click logic
+        if ($nav.length) {
+          var $link = $nav.find('a').filter(function () {
+            var href = (this.getAttribute('href') || '').trim();
+            return href.endsWith('#' + id) || this.hash === ('#' + id);
+          }).first();
+          if ($link.length) {
+            $link.trigger('click');
+            return;
+          }
+        }
+
+        // 2) Try: match header h2 id directly
+        var $headerById = $peopleHeaders.find('h2#' + CSS.escape(id)).first().closest('.view-header');
+        if ($headerById.length) {
+          openByHeader($headerById);
+          return;
+        }
+
+        // 3) Fallback: match header text (handles cases where hash equals title)
+        var $headerByText = $peopleHeaders.find('h2').filter(function () {
+          return $(this).text().trim() === id;
+        }).first().closest('.view-header');
+        if ($headerByText.length) {
+          openByHeader($headerByText);
+        }
+      }
+
+      // Initial on page load
+      handleHash(window.location.hash || '');
+
+      // Respond to in-page hash changes
+      $(window).on('hashchange', function () {
+        handleHash(window.location.hash || '');
+      });
+    })();
 
     ////////////////////////////////////////////// Introduction page
     //Learning and Teaching
@@ -716,6 +976,477 @@ jQuery(function ($) {
           `).show();
       }
     });
+    ////////////////////////////////////////////// laboratories page
+    // VR Image Viewer
+    function initVRViewer() {
+      // 檢查 PhotoSphereViewer 是否可用
+      if (typeof PhotoSphereViewer === 'undefined') {
+        console.warn('PhotoSphereViewer is not loaded');
+        return;
+      }
+
+      // 查找所有包含 VR 圖片的容器
+      $('.field--name-field-vr-image').each(function () {
+        var $container = $(this);
+        var $img = $container.find('img');
+
+        if ($img.length === 0) return;
+
+        var imgSrc = $img.attr('src');
+        var imgAlt = $img.attr('alt') || 'VR Image';
+
+        // 檢查是否已經處理過
+        if ($container.hasClass('vr-processed')) return;
+        $container.addClass('vr-processed');
+
+        // 創建 VR 查看器容器
+        var viewerId = 'vr-viewer-' + Math.random().toString(36).substr(2, 9);
+        var $viewerContainer = $(`
+          <div class="vr-viewer-container">
+            <div id="${viewerId}" class="vr-viewer" style="width: 100%; height: 450px;"></div>
+          </div>
+        `);
+
+        // 替換原圖片
+        $container.html($viewerContainer);
+
+        var viewer = null;
+        var isViewerInitialized = false;
+
+        // 直接初始化 PhotoSphereViewer
+        function initializeViewer() {
+          if (isViewerInitialized) return;
+
+          try {
+            // 檢查插件是否可用
+            var plugins = [];
+            if (typeof PhotoSphereViewer.GalleryPlugin !== 'undefined') {
+              plugins.push(PhotoSphereViewer.GalleryPlugin);
+            }
+            if (typeof PhotoSphereViewer.MarkersPlugin !== 'undefined') {
+              plugins.push(PhotoSphereViewer.MarkersPlugin);
+            }
+
+            var viewerConfig = {
+              container: document.getElementById(viewerId),
+              panorama: imgSrc,
+              navbar: ['autorotate', 'zoom', 'move', 'fullscreen'],
+              defaultZoomLvl: 0,
+              minFov: 30,
+              maxFov: 90,
+              sphereCorrection: { pan: 0, tilt: 0, roll: 0 },
+              caption: imgAlt
+            };
+
+            // 只有在插件可用時才添加
+            if (plugins.length > 0) {
+              viewerConfig.plugins = plugins;
+            }
+
+            viewer = new PhotoSphereViewer.Viewer(viewerConfig);
+            isViewerInitialized = true;
+
+            // 使用 v5 的事件監聽器
+            viewer.addEventListener('ready', function () {
+              console.log('VR Viewer ready');
+              // 延遲啟動自動旋轉
+              setTimeout(function () {
+                if (viewer && typeof viewer.toggleAutorotate === 'function') {
+                  console.log('Starting autorotate...');
+                  viewer.toggleAutorotate();
+                  console.log('Autorotate toggled');
+                } else {
+                  console.log('toggleAutorotate method not available');
+                }
+              }, 2000);
+            });
+
+            // 強制調整查看器大小
+            setTimeout(function () {
+              if (viewer) {
+                viewer.autoSize();
+                // 確保容器有正確的高度
+                var $container = $('#' + viewerId);
+                $container.css('height', '450px');
+                viewer.autoSize();
+
+                // 監聽窗口大小變化
+                $(window).on('resize.vr-viewer-' + viewerId, function () {
+                  if (viewer) {
+                    setTimeout(function () {
+                      viewer.autoSize();
+                    }, 100);
+                  }
+                });
+              }
+            }, 200);
+          } catch (error) {
+            console.error('Failed to initialize VR Viewer:', error);
+            $viewerContainer.find('.vr-close-btn').text('初始化失敗').prop('disabled', true);
+          }
+        }
+
+        // 延遲初始化查看器，確保容器已正確渲染
+        setTimeout(function () {
+          initializeViewer();
+        }, 100);
+      });
+    }
+
+    // 初始化 VR 查看器
+    if ($('body').hasClass('page-node-56')) {
+      initVRViewer();
+    }
+    ////////////////////////////////////////////// Research page
+    const researchPageMapping = {
+      'page-node-39': 1,
+      'page-node-40': 2,
+      'page-node-41': 3,
+      'page-node-43': 4,
+      'page-node-44': 5,
+      'page-node-45': 6,
+      'page-node-46': 7
+    };
+
+    // 查找匹配的頁面類別並設置對應的選項為活動狀態
+    for (const pageClass in researchPageMapping) {
+      if ($('body').hasClass(pageClass)) {
+        $('.research-choose>li:nth-child(' + researchPageMapping[pageClass] + ')').addClass('active');
+        break; // 找到匹配項後跳出循環
+      }
+    }
+    // Research Projects Search Functionality
+    function performResearchSearch(searchValue) {
+      console.log('Search function called with:', searchValue);
+
+      if (!searchValue || searchValue.trim() === '') {
+        // If search is empty, show all rows and all paragraphs
+        $('.view-block-research-project-list .views-row').show();
+        $('.view-block-research-project-list .paragraph--type--research-project-section').show();
+        // console.log('Empty search - showing all content');
+        return;
+      }
+
+      var searchTerm = searchValue.toLowerCase().trim();
+      var hasResults = false;
+
+      console.log('Searching for term:', searchTerm);
+      console.log('Found rows:', $('.view-block-research-project-list .views-row').length);
+
+      $('.view-block-research-project-list .views-row').each(function () {
+        var $row = $(this);
+        var rowHasMatch = false;
+
+
+        // Search in Chief Investigator name (views-field-title) - CORRECT SELECTOR
+        var chiefInvestigator = $row.find('.views-field-title span.field-content').text().toLowerCase();
+        // console.log('Chief Investigator:', chiefInvestigator);
+
+        // Check if Chief Investigator matches
+        if (chiefInvestigator.includes(searchTerm)) {
+          rowHasMatch = true;
+          // console.log('Chief Investigator match found');
+          // If Chief Investigator matches, show ALL paragraphs in this row
+          $row.find('.paragraph--type--research-project-section').show();
+          // console.log('All paragraphs shown for Chief Investigator match');
+        } else {
+          // If Chief Investigator doesn't match, check each paragraph individually
+          $row.find('.paragraph--type--research-project-section').each(function () {
+            var $paragraph = $(this);
+            var paragraphMatches = false;
+
+            // Search in Project Title - DIRECT SELECTOR
+            var projectTitle = $paragraph.find('.field--name-field-project-title').text().toLowerCase();
+            console.log('Project Title:', projectTitle);
+            if (projectTitle.includes(searchTerm)) {
+              paragraphMatches = true;
+              rowHasMatch = true;
+              // console.log('Project Title match found');
+            }
+
+            // Search in Description - DIRECT SELECTOR
+            var description = $paragraph.find('.field--name-field-description').text().toLowerCase();
+            // console.log('Description:', description);
+            if (description.includes(searchTerm)) {
+              paragraphMatches = true;
+              rowHasMatch = true;
+              // console.log('Description match found');
+            }
+
+            // Show or hide this specific paragraph
+            if (paragraphMatches) {
+              $paragraph.show();
+              // console.log('Paragraph shown');
+            } else {
+              $paragraph.hide();
+              // console.log('Paragraph hidden');
+            }
+          });
+        }
+
+        // Show or hide the entire row based on whether any content matches
+        if (rowHasMatch) {
+          $row.show();
+          hasResults = true;
+          // console.log('Row shown');
+        } else {
+          $row.hide();
+          // console.log('Row hidden');
+        }
+      });
+
+      // Optional: Show "No results found" message if needed
+      if (!hasResults) {
+        // console.log('No research projects found matching: ' + searchValue);
+      } else {
+        // console.log('Search completed with results');
+      }
+    }
+
+    // Research Projects Search Event Handlers
+    $('#research-searching').on('input keyup', function () {
+      var searchValue = $(this).val();
+      performResearchSearch(searchValue);
+    });
+
+    $('#research-searching').on('keypress', function (e) {
+      // Check if Enter key is pressed
+      if (e.which === 13 || e.keyCode === 13) {
+        e.preventDefault(); // Prevent default form submission
+        var searchValue = $(this).val();
+        performResearchSearch(searchValue);
+      }
+    });
+
+    // Also listen for form submission (in case there's a search button)
+    $('#research-searching').closest('form').on('submit', function (e) {
+      e.preventDefault(); // Prevent default form submission
+      var searchValue = $('#research-searching').val();
+      performResearchSearch(searchValue);
+    });
+
+    ////////////////////////////////////////////// programmes
+    // 優化後的 programmes 處理邏輯
+    function initializeProgrammes() {
+      // 選擇器配置
+      const SELECTORS = {
+        admissionTel: '.field--name-field-admissions-tel',
+        admissionEnquiry: '.field--name-field-admissions-enquriy',
+        programmeTel: '.field--name-field-programme-tel',
+        programmeEmail: '.field--name-field-programme-email',
+        leaflet: '.field--name-field-leafet .field__item',
+        programmeCodeAims: '.block-field-blocknodeprogrammesfield-programme-code-aims-body>div',
+        programmeStructure: '.block-field-blocknodeprogrammesfield-programme-structure-curric>div',
+        programmeMedium: '.block-field-blocknodeprogrammesfield-medium-of-instructions-bod>div',
+        programmeTuition: '.block-field-blocknodeprogrammesfield-tuition-fee-scholarship-bo>div',
+        programmeOutlines: '.block-field-blocknodeprogrammesfield-course-outlines-body>div',
+        programmeCareer: '.block-field-blocknodeprogrammesfield-student-corner-body>div',
+        programmeEnquiries: '.block-field-blocknodeprogrammesfield-programme-enquiries-body>div',
+        admissionsBlock: '.block-field-blocknodeprogrammesfield-admissions-tel',
+        programmeBlock: '.block-field-blocknodeprogrammesfield-programme-tel'
+      };
+
+      // 標籤頁配置
+      const TAB_BODIES = [
+        '#programme-tab-body-1',
+        '#programme-tab-body-2',
+        '#programme-tab-body-3',
+        '#programme-tab-body-4',
+        '#programme-tab-body-5',
+        '#programme-tab-body-6',
+        '#programme-tab-body-7'
+      ];
+
+      $('.page-node-type-programmes').each(function () {
+        const $container = $(this);
+
+        // 批量獲取所有需要的數據，減少 DOM 查詢
+        const data = extractProgrammeData($container, SELECTORS);
+
+        // 生成 HTML 模板
+        const admissionsHtml = generateAdmissionsHtml(data.admissionTel, data.admissionEnquiry);
+        const programmeHtml = generateProgrammeHtml(data.programmeTel, data.programmeEmail);
+
+        // 處理 leaflet 下載鏈接
+        if (data.leaflet) {
+          $container.find(SELECTORS.leaflet).html(`<a href="${data.leaflet}" target="_blank">Download Leaflet</a>`);
+        }
+
+        // 插入新的 HTML 並移除舊元素
+        insertAndCleanup($container, admissionsHtml, programmeHtml, SELECTORS);
+
+        // 更新標籤頁內容
+        updateTabContents($container, data.tabContents, TAB_BODIES);
+      });
+    }
+
+    // 提取程式數據的輔助函數
+    function extractProgrammeData($container, selectors) {
+      const getText = (selector) => $container.find(selector).text().trim();
+      const getHtml = (selector) => $container.find(selector).html() || '';
+
+      return {
+        admissionTel: getText(selectors.admissionTel),
+        admissionEnquiry: getHtml(selectors.admissionEnquiry),
+        programmeTel: getText(selectors.programmeTel),
+        programmeEmail: getHtml(selectors.programmeEmail),
+        leaflet: getText(selectors.leaflet),
+        tabContents: [
+          getHtml(selectors.programmeCodeAims),
+          getHtml(selectors.programmeStructure),
+          getHtml(selectors.programmeMedium),
+          getHtml(selectors.programmeTuition),
+          getHtml(selectors.programmeOutlines),
+          getHtml(selectors.programmeCareer),
+          getHtml(selectors.programmeEnquiries)
+        ]
+      };
+    }
+
+    // 生成招生 HTML
+    function generateAdmissionsHtml(tel, enquiry) {
+      return `
+        <div class="admission-html">
+          <div class="admission-tel">${tel}</div>
+          <div class="admission-enquriy">${enquiry}</div>
+        </div>
+      `;
+    }
+
+    // 生成課程 HTML
+    function generateProgrammeHtml(tel, email) {
+      return `
+        <div class="programme-html">
+          <div class="programme-tel">${tel}</div>
+          <div class="programme-email">${email}</div>
+        </div>
+      `;
+    }
+
+    // 插入新 HTML 並清理舊元素
+    function insertAndCleanup($container, admissionsHtml, programmeHtml, selectors) {
+      // 插入新內容
+      $container.find(selectors.admissionsBlock).before(admissionsHtml);
+      $container.find(selectors.programmeBlock).before(programmeHtml);
+
+      // 移除舊元素
+      const elementsToRemove = [
+        selectors.admissionsBlock,
+        '.block-field-blocknodeprogrammesfield-admissions-enquriy',
+        selectors.programmeBlock,
+        '.block-field-blocknodeprogrammesfield-programme-email'
+      ];
+
+      elementsToRemove.forEach(selector => {
+        $container.find(selector).remove();
+      });
+    }
+
+    // 更新標籤頁內容
+    function updateTabContents($container, tabContents, tabBodies) {
+      tabContents.forEach((content, index) => {
+        if (content && tabBodies[index]) {
+          $container.find(tabBodies[index]).html(content);
+        }
+      });
+    }
+    ////////////////////////////////////////////// Laboratories
+    (function setupLaboratoriesDropdown() {
+      // 支援 page-node-56 或通用容器 (#tab-85)
+      var $navs = $('.page-node-56 #tab-85>.paragraph__column>nav, #tab-85>.paragraph__column>nav');
+      if ($navs.length === 0) return;
+
+      $navs.each(function () {
+        var $nav = $(this);
+        // 若尚未插入 dropdown，先插入
+        if ($nav.find('.dropdown-section').length === 0) {
+          $nav.prepend(`
+            <div class="dropdown-section">
+              <div class="laboratories-dropdown">
+                <div class="dropdown-button"></div>
+              </div>
+              <ul class="laboratories-dropdown-menu"></ul>
+            </div>
+          `);
+        }
+
+        // 初始化 Labs 手機下拉（與 .nav-tabs 同步）
+        if ($nav.hasClass('labs-dropdown-processed')) return;
+        $nav.addClass('labs-dropdown-processed');
+
+        var $tabs = $nav.find('.nav.nav-tabs .nav-link');
+        var $dropdown = $nav.find('.laboratories-dropdown');
+        var $dropdownBtn = $dropdown.find('.dropdown-button');
+        var $menu = $nav.find('.laboratories-dropdown-menu');
+
+        // 兼容性：若 nav 內找不到，嘗試在同一容器下全域尋找一次
+        if ($tabs.length === 0) {
+          $tabs = $('.nav.nav-tabs .nav-link');
+        }
+
+        // 生成下拉項目，與 tab 一一對應
+        $menu.empty();
+        $tabs.each(function (idx) {
+          var $btn = $(this);
+          var label = $btn.text().trim();
+          var id = $btn.attr('href') || $btn.attr('data-bs-target') || ('#tab-' + (idx + 1));
+          var $li = $('<li class="laboratory-dropdown-item"></li>');
+          var $a = $('<a href="#" role="button"></a>').text(label).attr('data-target', id);
+          $li.append($a);
+          $menu.append($li);
+
+          // 點擊下拉 -> 觸發對應 tab
+          $a.on('click', function (e) {
+            e.preventDefault();
+            // 嘗試以 href 匹配到對應 nav-link
+            var target = $(this).attr('data-target');
+            var $targetBtn = $tabs.filter('[href="' + target + '"]');
+            if ($targetBtn.length === 0) {
+              $targetBtn = $tabs.filter('[data-bs-target="' + target + '"]');
+            }
+            if ($targetBtn.length) {
+              $targetBtn.trigger('click');
+            }
+            $dropdownBtn.text($(this).text().trim());
+          });
+        });
+
+        // 初始化按鈕文字（當前 active 或第一個）
+        var $activeTab = $tabs.filter('.active').first();
+        if ($activeTab.length === 0) $activeTab = $tabs.first();
+        $dropdownBtn.text($activeTab.text().trim());
+
+        // 監聽 tab 顯示事件，更新按鈕文字
+        document.addEventListener('shown.bs.tab', function (event) {
+          var label = $(event.target).text().trim();
+          $dropdownBtn.text(label);
+          $dropdown.removeClass('open');
+        });
+
+        // 點擊按鈕展開/收起清單
+        $dropdownBtn.on('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var isOpen = $dropdown.toggleClass('open').hasClass('open');
+          $dropdownBtn.attr('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        // 點擊選項後關閉
+        $menu.on('click', 'a', function () {
+          $dropdown.removeClass('open');
+        });
+
+        // 點擊外部關閉
+        $(document).on('click', function (e) {
+          var $target = $(e.target);
+          if ($target.closest('.laboratories-dropdown').length === 0) {
+            $dropdown.removeClass('open');
+          }
+        });
+      });
+    })();
+    // 初始化程式頁面
+    initializeProgrammes();
     ////////////////////////////////////////////// 監聽 AJAX 完成事件
     $(document).ajaxComplete(function () {
       // News && Events list
@@ -761,14 +1492,13 @@ jQuery(function ($) {
       if ($('.years-select').length === 0) {
         // 重新提取年份數據
         var yearArray = extractAndSortYears();
-        $('.view-block-news-events-list.view-display-id-block_1 .js-form-item-field-years-value').before(`
-            <div class="years-select js-form-item form-item js-form-type-select form-type-select js-form-item-field-years-target-id form-item-field-years-value" >
-              <label for="edit-field-years-value">Year</label>
-              <select data-drupal-selector="edit-field-years-value" name="field_years_value" class="form-select form-control" id="edit-field-years-value">
+        $('.block-views-blockblock-news-events-list-block-1 .js-form-item-field-date-value').before(`
+          <div class="years-select js-form-item form-item js-form-type-select form-type-select js-form-item-field-date-target-id form-item-field-date-value" >
+            <select data-drupal-selector="edit-field-date-value" name="field_date_value" class="form-select form-control" id="edit-field-date-value">
 
-              </select>
-            </div>
-        `).html('');
+            </select>
+          </div>
+      `).html('');
         $('.years-select select').append(yearArray.map(function (year) {
           return `<option value="${year}">${year}</option>`;
         }));
@@ -797,8 +1527,31 @@ jQuery(function ($) {
       // 重新綁定自動提交事件（AJAX更新後）
       bindAutoSubmitEvents();
 
+      // 重新初始化研究項目搜索功能（AJAX更新後）
+      if ($('#research-searching').length > 0) {
+        // 重新綁定搜索事件
+        $('#research-searching').off('input keyup').on('input keyup', function () {
+          var searchValue = $(this).val();
+          performResearchSearch(searchValue);
+        });
+
+        $('#research-searching').off('keypress').on('keypress', function (e) {
+          if (e.which === 13 || e.keyCode === 13) {
+            e.preventDefault();
+            var searchValue = $(this).val();
+            performResearchSearch(searchValue);
+          }
+        });
+      }
+
     });
-
-
+    ///////////////////////////////// AOS
+    setTimeout(function () {
+      AOS.init({
+        duration: 1000,
+        delay: 200,
+        once: true,
+      });
+    }, 200);
   });
 });

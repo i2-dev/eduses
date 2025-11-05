@@ -37,7 +37,6 @@
     'view-id-' ~ id,
     'view-display-id-' ~ display_id,
     dom_id ? 'js-view-dom-id-' ~ dom_id,
-    'aos-init',
   ]
 %}
 <div{{ attributes.addClass(classes) }} data-aos="fade-up">
@@ -63,14 +62,7 @@
   {% endif %}
 
   {% if rows %}
-    <div class="view-content">
-      <ul class="views-row-header">
-         <li>{{ 'Chief Investigator'|t }}</li>
-         <li>{{ 'Project Title'|t }}</li>
-         <li>{{ 'SDG'|t }}</li>
-         <li>{{ 'Description'|t }}</li>
-         <li>{{ 'Project Year'|t }}</li>
-      </ul>
+    <div class="view-content row">
       {{ rows }}
     </div>
   {% elseif empty %}

@@ -58,7 +58,7 @@ content.bp_padding[0]['#markup'] ? content.bp_padding[0]['#markup'],
 {% set paragraph_id = 'tab-' ~ paragraph.id.value %}
 
 {# Prints Tabs template. #}
-	<div{{attributes.addClass(classes).setAttribute('id',paragraph_id)}} role="tablist" aria-multiselectable="true"> <div class="paragraph__column">
+	<div{{attributes.addClass(classes).setAttribute('id',paragraph_id)}} role="tablist" aria-multiselectable="true" data-aos="fade-up"> <div class="paragraph__column" >
 		{% if paragraph.bp_header is not empty %}
 			<h2>{{ content.bp_header }}</h2>
 		{% endif %}

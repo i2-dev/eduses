@@ -37,9 +37,10 @@
     'view-id-' ~ id,
     'view-display-id-' ~ display_id,
     dom_id ? 'js-view-dom-id-' ~ dom_id,
+    'aos-init',
   ]
 %}
-<div{{ attributes.addClass(classes) }}>
+<div{{ attributes.addClass(classes) }} data-aos="fade-up">
   {{ title_prefix }}
   {% if title %}
     {{ title }}

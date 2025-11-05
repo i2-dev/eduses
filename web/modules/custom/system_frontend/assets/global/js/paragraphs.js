@@ -1,6 +1,7 @@
 jQuery(function ($) {
   $(document).ready(function () {
     $('.paragraph:not(.paragraph--type--section):not(form.node-form .paragraph)').each(function () {
+      var animation_name = $(this).find('>.paragraph__column .field--name-field-animation-style').text().trim();
       var show_name = $(this).find('.paragraph__column .field--name-field-state').text().trim();
       var class_name = $(this).find('>.paragraph__column .field--name-field-class').text().trim();
       var class_width = $(this).find('>.paragraph__column .field--name-field-width').text().trim();
@@ -12,6 +13,9 @@ jQuery(function ($) {
       if (show_name) {
         $(this).parent().addClass(show_name);
       };
+      if (animation_name) {
+        $(this).parent().attr('data-aos', animation_name);
+    };
       if (class_width) {
         // Clean up any existing container classes before adding new ones
         var currentClasses = $(this).attr('class') || '';
@@ -74,10 +78,10 @@ jQuery(function ($) {
         $(this).addClass(button_color);
       };
       if (button_size) {
-        $(this).addClass(button_size);
+        $(this).parents('.paragraph--type--button-paragraphs').addClass(button_size);
       };
       if (button_type) {
-        $(this).addClass(button_type);
+        $(this).parents('.paragraph--type--button-paragraphs').addClass(button_type);
         if (button_type == 'button') {
           $(this).find('.field--name-field-link>a').text('Apply Now');
         }
@@ -118,12 +122,11 @@ jQuery(function ($) {
         var swiperContainer = $(`
           <div class="swiper carouselSectionSwiper carouselSectionSwiper-${i}">
             <div class="swiper-wrapper"></div>
-            <div class="swiper-button">
+          </div>
+           <div class="swiper-button container">
               <div class="swiper-button-next carouselSectionSwiper-button-next-${i}"></div>
               <div class="swiper-button-prev carouselSectionSwiper-button-prev-${i}"></div>
-              <div class="swiper-pagination carouselSectionSwiper-pagination-${i}"></div>
             </div>
-          </div>
         `);
 
         // Insert swiper container after the paragraph column
@@ -164,6 +167,7 @@ jQuery(function ($) {
           slidesPerView: 1,
           spaceBetween: 30,
           loop: carouselItems.length > 1,
+          centeredSlides: true,
           autoplay: {
             delay: 5000,
             disableOnInteraction: false,
@@ -182,7 +186,7 @@ jQuery(function ($) {
               spaceBetween: 30,
             },
             1024: {
-              slidesPerView: 3,
+              slidesPerView: 'auto',
               spaceBetween: 30,
             }
           }
@@ -191,11 +195,11 @@ jQuery(function ($) {
     });
     //////////////////////////// Paragraphs Video Section
     $('.paragraph--type--video-section').each(function () {
-      $(this).addClass('col-12 col-md-10 col-lg-8');
+      $(this).find('>.paragraph__column>div:nth-child(2)>div.layout__region').addClass('video-section-content');
     });
     //////////////////////////// Paragraphs Table section
     var i2_table = `
-    <div class="i2-table container">
+    <div class="i2-table container table-responsive">
         <table class="table table-striped table-hover">
             <thead>
                 <tr></tr>
@@ -249,7 +253,9 @@ jQuery(function ($) {
         }
       });
 
-      outerElement.find('>.paragraph__column').html('');
+      outerElement.find('>.paragraph__column .block-field-blockparagraphtablefield-table-color').html('');
+      outerElement.find('>.paragraph__column .block-field-blockparagraphtablefield-paragraph').html('');
+      outerElement.find('>.paragraph__column .block-field-blockparagraphtablefield-table-tbody').html('');
     });
     $('.paragraph--type--table .i2-table>table>tbody tr').each(function () {
       var outerElement = $(this);
@@ -264,11 +270,16 @@ jQuery(function ($) {
     $('.paragraph--type--bp-tabs').each(function () {
       var $this = $(this);
       var classList = $this.attr('class');
-      console.log('Before cleanup:', classList);
+      $(this).find('.nav-tabs>.nav-link').each(function () {
+        var $this = $(this);
+        var text = $this.text();
+        if (text) {
+          $this.html(text);
+        }
+      });
       if (classList) {
         // Remove any duplicated container classes and ensure only one container class
         var cleanClasses = classList.replace(/container+/g, 'container');
-        console.log('After cleanup:', cleanClasses);
         $this.attr('class', cleanClasses);
       }
     });
@@ -287,15 +298,15 @@ jQuery(function ($) {
     });
 
     // Additional cleanup with timeout to ensure it runs after all other scripts
-    setTimeout(function() {
+    setTimeout(function () {
       $('.paragraph--type--bp-tabs').each(function () {
         var $this = $(this);
         var classList = $this.attr('class');
         if (classList && classList.includes('containercontainer')) {
-          console.log('Found duplicated containers, cleaning...');
+          // console.log('Found duplicated containers, cleaning...');
           var cleanClasses = classList.replace(/container+/g, 'container');
           $this.attr('class', cleanClasses);
-          console.log('Cleaned classes:', cleanClasses);
+          // console.log('Cleaned classes:', cleanClasses);
         }
       });
     }, 100);

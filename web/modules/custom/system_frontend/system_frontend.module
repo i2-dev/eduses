@@ -5,11 +5,63 @@
  * The main module file.
  */
 
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
+/**
+ * Implements hook_page_attachments().
+ */
 function system_frontend_page_attachments(array &$attachments)
 {
   $attachments['#attached']['library'][] = 'system_frontend/global';
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function system_frontend_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Only alter node edit forms
+  if (strpos($form_id, 'node_') === 0 && isset($form['actions'])) {
+    // Check if this is a translation page
+    $route_match = \Drupal::routeMatch();
+    $node = $route_match->getParameter('node');
+    $langcode = NULL;
+    
+    if ($node) {
+      // Get current language from URL or form
+      $current_langcode = $node->language()->getId();
+      
+      // Check if we're in translation mode
+      if (isset($form['langcode'])) {
+        $langcode = $form['langcode']['#value'];
+      }
+      
+      // Add translation button next to save button
+      $form['actions']['translate'] = [
+        '#type' => 'button',
+        '#value' => t('Translate'),
+        '#attributes' => [
+          'class' => ['button', 'btn', 'btn-secondary', 'translate-button'],
+          'id' => 'edit-translate',
+        ],
+        '#weight' => 10,
+        '#limit_validation_errors' => [],
+      ];
+      
+      // Attach translation library
+      $form['#attached']['library'][] = 'system_frontend/translation';
+      
+      // Store node ID and language info for JavaScript
+      if ($node->id()) {
+        $form['#attached']['drupalSettings']['translation'] = [
+          'nodeId' => $node->id(),
+          'currentLangcode' => $current_langcode,
+          'targetLangcode' => $langcode ?: $current_langcode,
+        ];
+      }
+    }
+  }
 }
 
 

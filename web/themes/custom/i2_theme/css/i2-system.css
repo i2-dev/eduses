@@ -488,7 +488,7 @@ ul li {
 
 a,
 p {
-    color: #000;
+    color: #282828;
     transition: color .35s;
     text-decoration: none;
     word-wrap: break-word;
@@ -560,10 +560,12 @@ h4,
 }
 
 h5,
-.h5,
+.h5 {
+    font-size: 20px;
+}
 h6,
 .h6 {
-    font-size: var(--font-size-18px);
+    font-size: 18px;
 }
 
 .btn {
@@ -584,7 +586,7 @@ table {
 #block-i2-theme-local-tasks nav.tabs-wrapper {
     position: fixed;
     bottom: 0;
-    z-index: 999;
+    z-index: 9999;
     background-color: #fff;
     margin: 15px;
     padding: 15px;
@@ -630,7 +632,7 @@ table {
     box-shadow: none;
 }
 
-@media all and (min-width: 992px) {
+@media all and (min-width: 1200px) {
     .navbar .nav-item .dropdown-menu {
         display: none;
     }

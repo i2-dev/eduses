@@ -81,3 +81,51 @@ body.page-node-type-page.homepage-edit-page .field--name-field-homepage-details-
 .node-programmes-edit-form .field--name-field-tags #edit-field-tags>div:not(:first-child, :nth-child(2)) {
   margin-left: 35px;
 }
+
+.js-form-item-field-tags-52 {
+  margin-left: 0 !important;
+  padding-left: 0;
+}
+
+.js-form-item-field-tags-52 input {
+  display: none;
+}
+
+/* SES Highlights CSS ------------------------------------------------------------------------------*/
+.highlightsRightSwiper .swiper-slide {
+  position: relative;
+}
+
+.highlightsRightSwiper .swiper-slide::before {
+  content: '';
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  width: 50px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 8px solid lightblue;
+  border-right-color: #14833E;
+  animation: l2 1s infinite linear;
+  position: absolute;
+  left: calc(50% - 25px);
+  top: calc(50% - 25px);
+  z-index: -1;
+}
+
+@keyframes l2 {
+  to {
+    transform: rotate(1turn)
+  }
+}
+
+/* news&&events  CSS ------------------------------------------------------------------------------*/
+.page-node-type-news-events .field--name-field-date span.date-separator {
+  background: url(/themes/custom/i2_theme/image/icon/card_date_arrow.svg) center center no-repeat;
+  text-indent: -9999px;
+  display: inline-block;
+  width: 52px;
+  height: 26px;
+  vertical-align: middle;
+}

@@ -556,7 +556,8 @@ h3,
 
 h4,
 .h4 {
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-md);
+    /* font-size: var(--font-size-sm); */
 }
 
 h5,
@@ -565,7 +566,7 @@ h5,
 }
 h6,
 .h6 {
-    font-size: 18px;
+    font-size: 20px;
 }
 
 .btn {

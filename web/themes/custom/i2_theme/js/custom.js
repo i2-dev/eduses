@@ -92,13 +92,13 @@ jQuery(function ($) {
       var $li = $(this);
       if ($li.find('>a.nav-link').text().trim() === $('.about-ses-dropdown>button.dropdown-toggle').text().trim()) {
         var ul_menu = $li.find('>ul.dropdown-menu').html();
-        $('.about-ses-dropdown>ul.dropdown-menu').html(ul_menu);
+        $('.about-ses-dropdown .dropdown-menu ul').html(ul_menu);
       } else if ($li.find('>a.nav-link').text().trim() === $('.people-dropdown>button.dropdown-toggle').text().trim()) {
         var ul_menu = $li.find('>ul.dropdown-menu').html();
-        $('.people-dropdown>ul.dropdown-menu').html(ul_menu);
+        $('.people-dropdown .dropdown-menu ul').html(ul_menu);
       } else if ($li.find('>a.nav-link').text().trim() === $('.news-dropdown>button.dropdown-toggle').text().trim()) {
         var ul_menu = $li.find('>ul.dropdown-menu').html();
-        $('.news-dropdown>ul.dropdown-menu').html(ul_menu);
+        $('.news-dropdown .dropdown-menu ul').html(ul_menu);
       } else { }
     });
     ////////////////////////////////////////////// header menu
@@ -1234,7 +1234,8 @@ jQuery(function ($) {
         admissionEnquiry: '.field--name-field-admissions-enquriy',
         programmeTel: '.field--name-field-programme-tel',
         programmeEmail: '.field--name-field-programme-email',
-        leaflet: '.field--name-field-leafet .field__item',
+        programmeLeader: '.field--name-field-programme-leader',
+        leaflet: '.field--name-field-leafet',
         programmeCodeAims: '.block-field-blocknodeprogrammesfield-programme-code-aims-body>div',
         programmeStructure: '.block-field-blocknodeprogrammesfield-programme-structure-curric>div',
         programmeMedium: '.block-field-blocknodeprogrammesfield-medium-of-instructions-bod>div',
@@ -1265,7 +1266,7 @@ jQuery(function ($) {
 
         // 生成 HTML 模板
         const admissionsHtml = generateAdmissionsHtml(data.admissionTel, data.admissionEnquiry);
-        const programmeHtml = generateProgrammeHtml(data.programmeTel, data.programmeEmail);
+        const programmeHtml = generateProgrammeHtml(data.programmeTel, data.programmeEmail, data.programmeLeader);
 
         // 處理 leaflet 下載鏈接
         if (data.leaflet) {
@@ -1290,6 +1291,7 @@ jQuery(function ($) {
         admissionEnquiry: getHtml(selectors.admissionEnquiry),
         programmeTel: getText(selectors.programmeTel),
         programmeEmail: getHtml(selectors.programmeEmail),
+        programmeLeader: getText(selectors.programmeLeader),
         leaflet: getText(selectors.leaflet),
         tabContents: [
           getHtml(selectors.programmeCodeAims),
@@ -1314,9 +1316,11 @@ jQuery(function ($) {
     }
 
     // 生成課程 HTML
-    function generateProgrammeHtml(tel, email) {
+    function generateProgrammeHtml(tel, email, leader) {
+      var leaderHtml = leader ? `<div class="programme-leader">${leader}</div>` : '';
       return `
         <div class="programme-html">
+          ${leaderHtml}
           <div class="programme-tel">${tel}</div>
           <div class="programme-email">${email}</div>
         </div>
@@ -1351,9 +1355,34 @@ jQuery(function ($) {
       });
     }
     ////////////////////////////////////////////// Laboratories
+    $('.file--mime-application-pdf a,.file--mime-application-vnd-openxmlformats-officedocument-wordprocessingml-document a,.paragraph--type--laboratory-document-section .field--name-field-link a').each(function () {
+      var $a = $(this);
+      var href = $a.attr('href');
+      if (href) {
+        $a.attr('target', '_blank');
+      }
+    });
     (function setupLaboratoriesDropdown() {
-      // 支援 page-node-56 或通用容器 (#tab-85)
-      var $navs = $('.page-node-56 #tab-85>.paragraph__column>nav, #tab-85>.paragraph__column>nav');
+      // 支援 page-node-56, page-node-57 或任何包含 field-class="node-laboratories" 的 tab 容器
+      // 查找所有包含 field-class 為 node-laboratories 的段落，然後找到其內的 nav 元素
+      var $navs = $();
+
+      // 方法1: 查找 page-node-56 和 page-node-57 中所有包含 .nav-tabs 的 nav
+      $('.page-node-56, .page-node-57').find('.paragraph--type--bp-tabs').each(function() {
+        var $tabContainer = $(this);
+        // 檢查是否包含 field-class 為 node-laboratories
+        var $fieldClass = $tabContainer.find('.field--name-field-class');
+        if ($fieldClass.length > 0 && $fieldClass.text().trim() === 'node-laboratories') {
+          var $nav = $tabContainer.find('>.paragraph__column>nav');
+          if ($nav.length > 0) {
+            $navs = $navs.add($nav);
+          }
+        }
+      });
+
+      // 方法2: 兼容舊的 #tab-85 選擇器
+      $navs = $navs.add($('#tab-85>.paragraph__column>nav'));
+
       if ($navs.length === 0) return;
 
       $navs.each(function () {

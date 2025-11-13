@@ -637,33 +637,33 @@ jQuery(function ($) {
       }
 
       var highlightsContainer = $(`
-              <section class="highlights-section">
-                <div class="content">
-                  <div class="left-content">
-                      <h2>SES Highlights</h2>
-                      <div class="left-sub-content">
-                        <div class="swiper highlightsLeftSwiper">
-                            <div class="swiper-wrapper">
+          <section class="highlights-section">
+            <div class="content">
+              <div class="left-content">
+                  <h2>SES Highlights</h2>
+                  <div class="left-sub-content">
+                    <div class="swiper highlightsLeftSwiper">
+                        <div class="swiper-wrapper">
 
-                            </div>
-                            <div class="swiper-button">
-                              <div class="swiper-button-next highlightsLeftSwiper-button-next-${i}"></div>
-                              <div class="swiper-button-prev highlightsLeftSwiper-button-prev-${i}"></div>
-                              <div class="swiper-pagination highlightsLeftSwiper-pagination-${i}"></div>
-                            </div>
                         </div>
-                      </div>
-                  </div>
-                  <div class="right-content">
-                    <div class="swiper highlightsRightSwiper">
-                      <div class="swiper-wrapper">
-
-                      </div>
+                        <div class="swiper-button">
+                          <div class="swiper-button-next highlightsLeftSwiper-button-next-${i}"></div>
+                          <div class="swiper-button-prev highlightsLeftSwiper-button-prev-${i}"></div>
+                          <div class="swiper-pagination highlightsLeftSwiper-pagination-${i}"></div>
+                        </div>
                     </div>
                   </div>
+              </div>
+              <div class="right-content">
+                <div class="swiper highlightsRightSwiper">
+                  <div class="swiper-wrapper">
+
+                  </div>
                 </div>
-              </section>
-            `);
+              </div>
+            </div>
+          </section>
+        `);
       // Insert the container into DOM first
       outerElement.find('>.paragraph__column').after(highlightsContainer);
 
@@ -679,16 +679,16 @@ jQuery(function ($) {
         }
         // Create swiper slide with the image
         var Leftslide = $(`
-                <div class="swiper-slide">
-                  <h3>${title}</h3>
-                  ${content}
-                </div>
-            `);
+            <div class="swiper-slide">
+              <h3>${title}</h3>
+              ${content}
+            </div>
+        `);
         var Rightslide = $(`
-                <div class="swiper-slide">
-                  ${media}
-                </div>
-            `);
+            <div class="swiper-slide">
+              ${media}
+            </div>
+        `);
 
         // Now we can find the swiper-wrapper since it's in the DOM
         var wrapperLeft = highlightsContainer.find('.highlightsLeftSwiper .swiper-wrapper');
@@ -750,8 +750,8 @@ jQuery(function ($) {
         },
         on: {
           slideChange: function () {
-            if (highlightsRightSwiper) {
-              highlightsRightSwiper.slideTo(this.activeIndex);
+            if (highlightsRightSwiper && !highlightsRightSwiper.destroyed) {
+              highlightsRightSwiper.slideToLoop(this.realIndex);
             }
             // Pause all videos when left swiper changes
             pauseAllVideos(highlightsContainer.find('.highlightsRightSwiper'));
@@ -764,8 +764,8 @@ jQuery(function ($) {
         loop: true,
         on: {
           slideChange: function () {
-            if (highlightsLeftswiper) {
-              highlightsLeftswiper.slideTo(this.activeIndex);
+            if (highlightsLeftswiper && !highlightsLeftswiper.destroyed) {
+              highlightsLeftswiper.slideToLoop(this.realIndex);
             }
             // Pause all videos when right swiper changes
             pauseAllVideos(highlightsContainer.find('.highlightsRightSwiper'));

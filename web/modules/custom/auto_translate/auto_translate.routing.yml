@@ -1,0 +1,22 @@
+auto_translate.translate:
+  path: '/auto-translate/translate'
+  defaults:
+    _controller: '\Drupal\auto_translate\Controller\TranslateController::translate'
+  methods: [POST]
+  requirements:
+    _permission: 'edit any content'
+
+auto_translate.save:
+  path: '/auto-translate/save'
+  defaults:
+    _controller: '\Drupal\auto_translate\Controller\TranslateController::save'
+  methods: [POST]
+  requirements:
+    _permission: 'edit any content'
+
+auto_translate.settings_form:
+  path: '/admin/config/services/auto-translate'
+  defaults:
+    _form: '\Drupal\auto_translate\Form\TranslateSettingsForm'
+  requirements:
+    _permission: 'administer site configuration'

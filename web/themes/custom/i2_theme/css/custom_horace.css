@@ -1,6 +1,9 @@
-.field--name-field-animation-style {
+.field--name-field-animation-style,
+.page-node-type-programmes .block-field-blocknodeprogrammesfield-admissions-email,
+.page-node-type-programmes .block-field-blocknodeprogrammesfield-programme-leader,
+.page-node-type-programmes .block-field-blocknodeprogrammesfield-programme-leader-name,
+.page-node-type-programmes .block-field-blocknodeprogrammesfield-programme-leader-tel,
+.page-node-type-programmes .block-field-blocknodeprogrammesfield-programme-leader-email {
   display: none;
 }
-.block-field-blocknodeprogrammesfield-programme-leader {
-  display: none;
-}
+

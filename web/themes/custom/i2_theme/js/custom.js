@@ -33,6 +33,79 @@ function initGoogleMap() {
 }
 
 jQuery(function ($) {
+  // 立即移除所有導航菜單中的 data-bs-toggle，防止 Bootstrap 自動初始化
+  // 使用立即執行函數確保在 DOM 準備好後立即執行
+  (function removeBootstrapDropdownToggle() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', removeBootstrapDropdownToggle);
+    } else {
+      // DOM 已經準備好，立即執行
+      $('#block-i2-theme-main-navigation button.dropdown-toggle').each(function () {
+        $(this).removeAttr('data-bs-toggle');
+        // 銷毀可能已存在的 Bootstrap dropdown 實例
+        if (typeof bootstrap !== 'undefined' && bootstrap.Dropdown) {
+          try {
+            var existingDropdown = bootstrap.Dropdown.getInstance(this);
+            if (existingDropdown) {
+              existingDropdown.dispose();
+            }
+          } catch (e) {
+            // 忽略錯誤
+          }
+        }
+      });
+    }
+  })();
+
+  // 在事件捕獲階段銷毀可能存在的 Bootstrap dropdown 實例
+  // 但不要阻止事件傳播，讓我們的自定義處理器可以執行
+  document.addEventListener('click', function (e) {
+    var target = e.target;
+    var $target = $(target);
+    if ($target.closest('#block-i2-theme-main-navigation button.dropdown-toggle').length > 0) {
+      // 如果點擊的是我們的 dropdown-toggle，銷毀 Bootstrap 實例
+      var $toggle = $target.closest('button.dropdown-toggle');
+      if ($toggle.closest('#block-i2-theme-main-navigation').length > 0) {
+        // 移除可能存在的 Bootstrap 事件監聽器和實例
+        if (typeof bootstrap !== 'undefined' && bootstrap.Dropdown) {
+          try {
+            var dropdown = bootstrap.Dropdown.getInstance($toggle[0]);
+            if (dropdown) {
+              dropdown.dispose();
+            }
+          } catch (e) {
+            // 忽略錯誤
+          }
+        }
+        // 確保移除 data-bs-toggle 屬性
+        $toggle.removeAttr('data-bs-toggle');
+        // 不阻止事件傳播，讓自定義處理器可以執行
+      }
+    }
+  }, true); // 使用捕獲階段，在 Bootstrap 處理之前執行
+
+  // 同樣處理觸摸事件
+  document.addEventListener('touchend', function (e) {
+    var target = e.target;
+    var $target = $(target);
+    if ($target.closest('#block-i2-theme-main-navigation button.dropdown-toggle').length > 0) {
+      var $toggle = $target.closest('button.dropdown-toggle');
+      if ($toggle.closest('#block-i2-theme-main-navigation').length > 0) {
+        if (typeof bootstrap !== 'undefined' && bootstrap.Dropdown) {
+          try {
+            var dropdown = bootstrap.Dropdown.getInstance($toggle[0]);
+            if (dropdown) {
+              dropdown.dispose();
+            }
+          } catch (e) {
+            // 忽略錯誤
+          }
+        }
+        $toggle.removeAttr('data-bs-toggle');
+      }
+    }
+  }, true);
+
   $(document).ready(function () {
 
     ////////////////////////////////////////////// header fixed
@@ -84,7 +157,72 @@ jQuery(function ($) {
           }
         });
     }
-
+    ////////////////////////////////////////////// menu 第一層可以飛link
+    $('#block-i2-theme-mainnavigation>ul.navbar-nav>li').click(function (e) {
+      // 如果点击的是 dropdown-item（下拉菜单项），不处理，让链接正常跳转
+      if ($(e.target).closest('.dropdown-item').length > 0) {
+        return;
+      }
+      var $li = $(this);
+      var $link = $li.find('>div>a.nav-link,>a.nav-link');
+      var href = $link.attr('href');
+      if (href) {
+        // 如果点击的是 dropdown-toggle，阻止 Bootstrap 的默认下拉行为
+        if ($(e.target).closest('.dropdown-toggle').length > 0) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        if ($link.attr('target') === '_blank') {
+          window.open(href, '_blank');
+        } else {
+          window.location.href = href;
+        }
+      }
+    });
+    $('#block-i2-theme-main-navigation>ul.navbar-nav>li').click(function (e) {
+      // 如果点击的是 dropdown-item（下拉菜单项），不处理，让链接正常跳转
+      if ($(e.target).closest('.dropdown-item').length > 0) {
+        return;
+      }
+      var $li = $(this);
+      var $link = $li.find('>div>a.nav-link,>a.nav-link');
+      var href = $link.attr('href');
+      if (href) {
+        // 如果点击的是 dropdown-toggle，阻止 Bootstrap 的默认下拉行为
+        if ($(e.target).closest('.dropdown-toggle').length > 0) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        if ($link.attr('target') === '_blank') {
+          window.open(href, '_blank');
+        } else {
+          window.location.href = href;
+        }
+      }
+    });
+    $('.header-menu-section .content>div.dropdown').click(function (e) {
+      // 如果点击的是 .nav-item 内的链接或 .nav-mega-body 内的任何链接，不处理（让链接正常跳转）
+      if ($(e.target).closest('.nav-item a, .nav-mega-body a').length > 0) {
+        return;
+      }
+      // 如果点击的是 dropdown-toggle 按钮，不处理
+      if ($(e.target).closest('.dropdown-toggle').length > 0) {
+        return;
+      }
+      // 点击 dropdown 的其他区域时，跳转到 .nav-mega-title a 的链接
+      var $div = $(this);
+      var $link = $div.find('.nav-mega-title a');
+      if ($link.length) {
+        var href = $link.attr('href');
+        if (href) {
+          if ($link.attr('target') === '_blank') {
+            window.open(href, '_blank');
+          } else {
+            window.location.href = href;
+          }
+        }
+      }
+    });
     // 初始設置（在 mega 菜單構建之前先執行一次）
     setExternalLinkTargets();
     ////////////////////////////////////////////// header special menu
@@ -107,23 +245,30 @@ jQuery(function ($) {
       if ($li.hasClass('nav-item-processed')) {
         return;
       }
-      var $toggle = $li.children('a.nav-link.dropdown-toggle');
+
+      // 查找新的結構：div > a.nav-link 和 ul.dropdown-menu
+      var $link = $li.children('div').find('a.nav-link').first();
+      if ($link.length === 0) {
+        // 如果找不到新結構，嘗試找舊結構
+        $link = $li.children('a.nav-link.dropdown-toggle');
+      }
       var $ul = $li.children('ul.dropdown-menu.nav-level-1');
-      if ($toggle.length === 0 || $ul.length === 0) {
+
+      if ($link.length === 0 || $ul.length === 0) {
         $li.addClass('nav-item-processed');
         return;
       }
 
       // 構建新的包裹結構：
-      var titleText = $toggle.text().trim();
+      var titleText = $link.text().trim();
       var $wrapper = $('<div class="nav-mega"></div>');
       var $titleDiv = $('<div class="nav-mega-title"></div>');
       var $titleLink = $('<a class="nav-mega-title-link"></a>')
-        .attr('href', $toggle.attr('href') || '#')
-        .attr('title', $toggle.attr('title') || titleText)
+        .attr('href', $link.attr('href') || '#')
+        .attr('title', $link.attr('title') || titleText)
         .text(titleText);
-      if ($toggle.attr('target')) { $titleLink.attr('target', $toggle.attr('target')); }
-      if ($toggle.attr('rel')) { $titleLink.attr('rel', $toggle.attr('rel')); }
+      if ($link.attr('target')) { $titleLink.attr('target', $link.attr('target')); }
+      if ($link.attr('rel')) { $titleLink.attr('rel', $link.attr('rel')); }
       $titleDiv.append($titleLink);
       var $bodyDiv = $('<div class="nav-mega-body"></div>');
 
@@ -139,6 +284,262 @@ jQuery(function ($) {
       // 構建完成後，確保克隆出的連結也正確設置 target
       setExternalLinkTargets();
     });
+
+    // 初始化新的 dropdown 結構（分離的按鈕和鏈接）- 使用自定義處理
+    function initDropdownMenus() {
+      $('#block-i2-theme-main-navigation > ul.navbar-nav > li.nav-item.dropdown').each(function () {
+        var $li = $(this);
+
+        var $toggle = $li.find('button.dropdown-toggle');
+        // 對於有 nav-mega 的菜單，menu 在 nav-mega-body 內，但我們需要控制原始的 menu
+        // 對於沒有 nav-mega 的菜單，menu 是直接子元素
+        var $menu = $li.children('ul.dropdown-menu');
+
+        // 如果找不到直接的 menu，可能是 nav-mega 結構，嘗試找 nav-mega-body 內的
+        if ($menu.length === 0) {
+          $menu = $li.find('.nav-mega-body > ul.dropdown-menu').first();
+        }
+
+        if ($toggle.length > 0 && $menu.length > 0 && !$toggle.data('dropdown-initialized')) {
+          var menuId = $menu.attr('id');
+          if (menuId) {
+            // 確保移除 Bootstrap 的 data-bs-toggle 和相關屬性
+            $toggle.removeAttr('data-bs-toggle');
+
+            // 銷毀任何已存在的 Bootstrap dropdown 實例
+            if (typeof bootstrap !== 'undefined' && bootstrap.Dropdown) {
+              try {
+                var existingDropdown = bootstrap.Dropdown.getInstance($toggle[0]);
+                if (existingDropdown) {
+                  existingDropdown.dispose();
+                }
+              } catch (e) {
+                // 忽略錯誤
+              }
+            }
+
+            // 檢查是否有 nav-mega
+            var $navMega = $li.find('.nav-mega');
+            var hasNavMega = $navMega.length > 0;
+
+            // 檢測是否應該顯示 dropdown-menu（寬度小於 1200px）
+            var shouldShowDropdown = function () {
+              return window.innerWidth < 1200;
+            };
+
+            // 根據屏幕大小切換菜單顯示方式的函數
+            // 使用閉包保存變量引用，確保函數執行時能訪問到正確的元素
+            var switchMenuDisplay = (function (toggle, menu, navMega, li, hasMega) {
+              return function () {
+                var showDropdown = window.innerWidth < 1200;
+                var isExpanded = $(toggle).attr('aria-expanded') === 'true';
+
+                if (!isExpanded) {
+                  return; // 如果菜單沒有打開，不需要切換
+                }
+
+                if (showDropdown) {
+                  // 應該顯示 dropdown-menu
+                  if (hasMega && navMega.length > 0) {
+                    navMega.css('display', 'none');
+                    li.removeClass('nav-item-hover');
+                  }
+                  if (menu.length > 0) {
+                    menu.addClass('show');
+                  }
+                } else {
+                  // 應該顯示 nav-mega
+                  if (menu.length > 0) {
+                    menu.removeClass('show');
+                  }
+                  if (hasMega && navMega.length > 0) {
+                    navMega.css('display', 'flex');
+                    li.addClass('nav-item-hover');
+                  }
+                }
+              };
+            })($toggle[0], $menu, $navMega, $li, hasNavMega);
+
+            // 處理下拉菜單切換的函數
+            var handleToggle = function (e) {
+              if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+              }
+
+              var isExpanded = $toggle.attr('aria-expanded') === 'true';
+              var showDropdown = shouldShowDropdown();
+
+              // 關閉所有其他下拉菜單和 nav-mega
+              $('#block-i2-theme-main-navigation > ul.navbar-nav > li.nav-item.dropdown').each(function () {
+                var $otherLi = $(this);
+                if ($otherLi[0] !== $li[0]) {
+                  var $otherToggle = $otherLi.find('button.dropdown-toggle');
+                  var $otherMenu = $otherLi.find('ul.dropdown-menu');
+                  var $otherNavMega = $otherLi.find('.nav-mega');
+                  $otherMenu.removeClass('show');
+                  $otherNavMega.css('display', 'none');
+                  $otherToggle.attr('aria-expanded', 'false');
+                  $otherLi.removeClass('nav-item-hover');
+                }
+              });
+
+              // 切換當前菜單
+              // 1200px 以下：顯示 dropdown-menu
+              // 1200px 以上：如果有 nav-mega 則顯示 nav-mega，否則顯示 dropdown-menu
+              if (isExpanded) {
+                // 關閉菜單
+                $menu.removeClass('show');
+                if (hasNavMega) {
+                  $navMega.css('display', 'none');
+                  $li.removeClass('nav-item-hover');
+                }
+                $toggle.attr('aria-expanded', 'false');
+              } else {
+                // 打開菜單
+                if (showDropdown) {
+                  // 1200px 以下：顯示 dropdown-menu
+                  $menu.addClass('show');
+                  if (hasNavMega) {
+                    $navMega.css('display', 'none');
+                    $li.removeClass('nav-item-hover');
+                  }
+                } else {
+                  // 1200px 以上：如果有 nav-mega 則顯示 nav-mega，否則顯示 dropdown-menu
+                  if (hasNavMega) {
+                    $navMega.css('display', 'flex');
+                    $li.addClass('nav-item-hover');
+                    $menu.removeClass('show');
+                  } else {
+                    $menu.addClass('show');
+                  }
+                }
+                $toggle.attr('aria-expanded', 'true');
+              }
+            };
+
+            // 移除 Bootstrap 的事件監聽器
+            $toggle.off('click.bs.dropdown touchend.bs.dropdown');
+
+            // 防止重複觸發的標記
+            var isHandling = false;
+
+            // 統一的處理函數，防止重複觸發
+            var unifiedHandle = function (e) {
+              if (isHandling) {
+                return;
+              }
+              isHandling = true;
+
+              if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+              }
+
+              handleToggle(e);
+
+              // 短暫延遲後重置標記，防止快速點擊
+              setTimeout(function () {
+                isHandling = false;
+              }, 300);
+            };
+
+            // 綁定點擊事件（桌面端）
+            $toggle.on('click.custom-dropdown', unifiedHandle);
+
+            // 綁定觸摸事件（手機端）
+            $toggle.on('touchend.custom-dropdown', function (e) {
+              unifiedHandle(e);
+            });
+
+            // 將 switchMenuDisplay 函數存儲在 toggle 元素上，以便後續使用
+            $toggle.data('switchMenuDisplay', switchMenuDisplay);
+            $toggle.data('menuElements', {
+              $menu: $menu,
+              $navMega: $navMega,
+              $li: $li,
+              hasNavMega: hasNavMega
+            });
+
+            // 標記為已初始化
+            $toggle.data('dropdown-initialized', true);
+          }
+        }
+      });
+
+      // 關閉所有下拉菜單的函數
+      var closeAllDropdowns = function () {
+        $('#block-i2-theme-main-navigation > ul.navbar-nav > li.nav-item.dropdown').each(function () {
+          var $li = $(this);
+          var $toggle = $li.find('button.dropdown-toggle');
+          var $menu = $li.find('ul.dropdown-menu');
+          var $navMega = $li.find('.nav-mega');
+          $menu.removeClass('show');
+          $navMega.css('display', 'none');
+          $li.removeClass('nav-item-hover');
+          $toggle.attr('aria-expanded', 'false');
+        });
+      };
+
+      // 點擊外部關閉下拉菜單（桌面端和手機端）
+      $(document).on('click touchend', function (e) {
+        if (!$(e.target).closest('#block-i2-theme-main-navigation > ul.navbar-nav > li.nav-item.dropdown').length) {
+          closeAllDropdowns();
+        }
+      });
+    }
+
+    // 在 DOM 準備好後初始化
+    initDropdownMenus();
+
+    // 添加全局窗口大小變化監聽器，實現響應式切換
+    var resizeTimer = null;
+    $(window).on('resize.custom-dropdown-global', function () {
+      // 使用防抖，避免頻繁觸發
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        $('#block-i2-theme-main-navigation > ul.navbar-nav > li.nav-item.dropdown').each(function () {
+          var $li = $(this);
+          var $toggle = $li.find('button.dropdown-toggle');
+
+          if ($toggle.data('dropdown-initialized')) {
+            var switchMenuDisplay = $toggle.data('switchMenuDisplay');
+            if (switchMenuDisplay && typeof switchMenuDisplay === 'function') {
+              switchMenuDisplay();
+            }
+          }
+        });
+      }, 150); // 150ms 防抖延遲
+    });
+
+    // 使用 MutationObserver 監聽 DOM 變化（比 DOMNodeInserted 更現代）
+    if (typeof MutationObserver !== 'undefined') {
+      var dropdownObserver = new MutationObserver(function (mutations) {
+        var shouldReinit = false;
+        mutations.forEach(function (mutation) {
+          if (mutation.addedNodes.length > 0) {
+            $(mutation.addedNodes).each(function () {
+              if ($(this).closest('#block-i2-theme-main-navigation').length > 0) {
+                shouldReinit = true;
+                return false;
+              }
+            });
+          }
+        });
+        if (shouldReinit) {
+          setTimeout(initDropdownMenus, 100);
+        }
+      });
+
+      var navElement = document.getElementById('block-i2-theme-main-navigation');
+      if (navElement) {
+        dropdownObserver.observe(navElement, {
+          childList: true,
+          subtree: true
+        });
+      }
+    }
+
     ////////////////////////////////////////////// 獲取當前年份
     $('#year_time').text(new Date().getFullYear());
     ////////////////////////////////////////////// homepage image carousel paragraphs
@@ -422,6 +823,10 @@ jQuery(function ($) {
     var swiper = new Swiper(".HomepageNews-Swiper", {
       slidesPerView: 'auto',
       loop: true,
+      autoplay: {
+        delay: 2000,
+        disableOnInteraction: false,
+      },
       spaceBetween: 27,
       // pagination: {
       //   el: ".HomepageNewsSwiper-pagination",
@@ -1048,15 +1453,15 @@ jQuery(function ($) {
 
             // 使用 v5 的事件監聽器
             viewer.addEventListener('ready', function () {
-              console.log('VR Viewer ready');
+              // console.log('VR Viewer ready');
               // 延遲啟動自動旋轉
               setTimeout(function () {
                 if (viewer && typeof viewer.toggleAutorotate === 'function') {
-                  console.log('Starting autorotate...');
+                  // console.log('Starting autorotate...');
                   viewer.toggleAutorotate();
-                  console.log('Autorotate toggled');
+                  // console.log('Autorotate toggled');
                 } else {
-                  console.log('toggleAutorotate method not available');
+                  // console.log('toggleAutorotate method not available');
                 }
               }, 2000);
             });
@@ -1094,9 +1499,8 @@ jQuery(function ($) {
     }
 
     // 初始化 VR 查看器
-    if ($('body').hasClass('page-node-56')) {
-      initVRViewer();
-    }
+    initVRViewer();
+
     ////////////////////////////////////////////// Research page
     const researchPageMapping = {
       'page-node-39': 1,
@@ -1117,7 +1521,7 @@ jQuery(function ($) {
     }
     // Research Projects Search Functionality
     function performResearchSearch(searchValue) {
-      console.log('Search function called with:', searchValue);
+      // console.log('Search function called with:', searchValue);
 
       if (!searchValue || searchValue.trim() === '') {
         // If search is empty, show all rows and all paragraphs
@@ -1130,8 +1534,8 @@ jQuery(function ($) {
       var searchTerm = searchValue.toLowerCase().trim();
       var hasResults = false;
 
-      console.log('Searching for term:', searchTerm);
-      console.log('Found rows:', $('.view-block-research-project-list .views-row').length);
+      // console.log('Searching for term:', searchTerm);
+      // console.log('Found rows:', $('.view-block-research-project-list .views-row').length);
 
       $('.view-block-research-project-list .views-row').each(function () {
         var $row = $(this);
@@ -1157,7 +1561,7 @@ jQuery(function ($) {
 
             // Search in Project Title - DIRECT SELECTOR
             var projectTitle = $paragraph.find('.field--name-field-project-title').text().toLowerCase();
-            console.log('Project Title:', projectTitle);
+            // console.log('Project Title:', projectTitle);
             if (projectTitle.includes(searchTerm)) {
               paragraphMatches = true;
               rowHasMatch = true;
@@ -1231,10 +1635,14 @@ jQuery(function ($) {
       // 選擇器配置
       const SELECTORS = {
         admissionTel: '.field--name-field-admissions-tel',
+        admissionEmail: '.field--name-field-admissions-email',
         admissionEnquiry: '.field--name-field-admissions-enquriy',
         programmeTel: '.field--name-field-programme-tel',
+        programmeName: '.field--name-field-programme-leader',
         programmeEmail: '.field--name-field-programme-email',
-        programmeLeader: '.field--name-field-programme-leader',
+        programmeLeaderName: '.field--name-field-programme-leader-name',
+        programmeLeaderTel: '.field--name-field-programme-leader-tel',
+        programmeLeaderEmail: '.field--name-field-programme-leader-email',
         leaflet: '.field--name-field-leafet',
         programmeCodeAims: '.block-field-blocknodeprogrammesfield-programme-code-aims-body>div',
         programmeStructure: '.block-field-blocknodeprogrammesfield-programme-structure-curric>div',
@@ -1265,8 +1673,9 @@ jQuery(function ($) {
         const data = extractProgrammeData($container, SELECTORS);
 
         // 生成 HTML 模板
-        const admissionsHtml = generateAdmissionsHtml(data.admissionTel, data.admissionEnquiry);
-        const programmeHtml = generateProgrammeHtml(data.programmeTel, data.programmeEmail, data.programmeLeader);
+        const admissionsHtml = generateAdmissionsHtml(data.admissionTel, data.admissionEmail, data.admissionEnquiry);
+        const programmeHtml = generateProgrammeHtml(data.programmeName, data.programmeTel, data.programmeEmail);
+        const programmeLeaderHtml = generateProgrammeLeaderHtml(data.programmeLeaderName, data.programmeLeaderTel, data.programmeLeaderEmail);
 
         // 處理 leaflet 下載鏈接
         if (data.leaflet) {
@@ -1274,7 +1683,7 @@ jQuery(function ($) {
         }
 
         // 插入新的 HTML 並移除舊元素
-        insertAndCleanup($container, admissionsHtml, programmeHtml, SELECTORS);
+        insertAndCleanup($container, admissionsHtml, programmeLeaderHtml, programmeHtml, SELECTORS);
 
         // 更新標籤頁內容
         updateTabContents($container, data.tabContents, TAB_BODIES);
@@ -1288,10 +1697,14 @@ jQuery(function ($) {
 
       return {
         admissionTel: getText(selectors.admissionTel),
+        admissionEmail: getHtml(selectors.admissionEmail),
         admissionEnquiry: getHtml(selectors.admissionEnquiry),
+        programmeName: getText(selectors.programmeName),
         programmeTel: getText(selectors.programmeTel),
         programmeEmail: getHtml(selectors.programmeEmail),
-        programmeLeader: getText(selectors.programmeLeader),
+        programmeLeaderName: getText(selectors.programmeLeaderName),
+        programmeLeaderTel: getText(selectors.programmeLeaderTel),
+        programmeLeaderEmail: getHtml(selectors.programmeLeaderEmail),
         leaflet: getText(selectors.leaflet),
         tabContents: [
           getHtml(selectors.programmeCodeAims),
@@ -1306,39 +1719,61 @@ jQuery(function ($) {
     }
 
     // 生成招生 HTML
-    function generateAdmissionsHtml(tel, enquiry) {
+    function generateAdmissionsHtml(tel, email, enquiry) {
+      const telHtml = tel ? `<div class="admission-tel">${tel}</div>` : '';
+      const emailHtml = email ? `<div class="admission-email">${email}</div>` : '';
+      const enquiryHtml = enquiry ? `<div class="admission-enquriy">${enquiry}</div>` : '';
       return `
         <div class="admission-html">
-          <div class="admission-tel">${tel}</div>
-          <div class="admission-enquriy">${enquiry}</div>
+          ${telHtml}
+          ${emailHtml}
+          ${enquiryHtml}
         </div>
       `;
     }
-
     // 生成課程 HTML
-    function generateProgrammeHtml(tel, email, leader) {
-      var leaderHtml = leader ? `<div class="programme-leader">${leader}</div>` : '';
+    function generateProgrammeHtml(name, tel, email) {
+      const nameHtml = name ? `<div class="programme-name">${name}</div>` : '';
+      const telHtml = tel ? `<div class="programme-tel">${tel}</div>` : '';
+      const emailHtml = email ? `<div class="programme-email">${email}</div>` : '';
       return `
         <div class="programme-html">
-          ${leaderHtml}
-          <div class="programme-tel">${tel}</div>
-          <div class="programme-email">${email}</div>
+          ${nameHtml}
+          ${telHtml}
+          ${emailHtml}
         </div>
       `;
     }
-
+    // 生成 Programme Leader HTML
+    function generateProgrammeLeaderHtml(name, tel, email) {
+      const nameHtml = name ? `<div class="programme-leader-name">${name}</div>` : '';
+      const telHtml = tel ? `<div class="programme-leader-tel">${tel}</div>` : '';
+      const emailHtml = email ? `<div class="programme-leader-email">${email}</div>` : '';
+      return `
+        <div class="programme-leader-html">
+          ${nameHtml}
+          ${telHtml}
+          ${emailHtml}
+        </div>
+      `;
+    }
     // 插入新 HTML 並清理舊元素
-    function insertAndCleanup($container, admissionsHtml, programmeHtml, selectors) {
+    function insertAndCleanup($container, admissionsHtml, programmeLeaderHtml, programmeHtml, selectors) {
       // 插入新內容
       $container.find(selectors.admissionsBlock).before(admissionsHtml);
       $container.find(selectors.programmeBlock).before(programmeHtml);
+      $container.find(selectors.programmeBlock).before(programmeLeaderHtml);
 
       // 移除舊元素
       const elementsToRemove = [
         selectors.admissionsBlock,
+        '.block-field-blocknodeprogrammesfield-admissions-email',
         '.block-field-blocknodeprogrammesfield-admissions-enquriy',
         selectors.programmeBlock,
-        '.block-field-blocknodeprogrammesfield-programme-email'
+        '.block-field-blocknodeprogrammesfield-programme-email',
+        '.block-field-blocknodeprogrammesfield-programme-leader-name',
+        '.block-field-blocknodeprogrammesfield-programme-leader-tel',
+        '.block-field-blocknodeprogrammesfield-programme-leader-email'
       ];
 
       elementsToRemove.forEach(selector => {
@@ -1368,7 +1803,7 @@ jQuery(function ($) {
       var $navs = $();
 
       // 方法1: 查找 page-node-56 和 page-node-57 中所有包含 .nav-tabs 的 nav
-      $('.page-node-56, .page-node-57').find('.paragraph--type--bp-tabs').each(function() {
+      $('.page-node-56, .page-node-57').find('.paragraph--type--bp-tabs').each(function () {
         var $tabContainer = $(this);
         // 檢查是否包含 field-class 為 node-laboratories
         var $fieldClass = $tabContainer.find('.field--name-field-class');
@@ -1476,6 +1911,25 @@ jQuery(function ($) {
     })();
     // 初始化程式頁面
     initializeProgrammes();
+    $('.page-node-type-programmes .field--name-field-leafet a').each(function () {
+      console.log('leaflet');
+      var $a = $(this);
+      var href = $a.attr('href');
+      if (href) {
+        $a.attr('href', '/sites/default/files/pdf/' + href);
+      }
+    });
+    ////////////////////////////////////////////// 翻譯函數
+    function updateTagsTranslation() {
+      $('html[lang="TC"] #views-exposed-form-block-news-events-list-block-1 .form-item-field-tags-target-id select option:nth-child(1)').text('所有類別');
+      $('html[lang="SC"] #views-exposed-form-block-news-events-list-block-1 .form-item-field-tags-target-id select option:nth-child(1)').text('所有类别');
+      $('html[lang="TC"] .page-node-type-programmes .field--name-field-leafet a').text('下載小冊子');
+      $('html[lang="SC"] .page-node-type-programmes .field--name-field-leafet a').text('下载小册子');
+      $('html[lang="tc"] .file--application-pdf a').text('下載');
+      $('html[lang="sc"] .file--application-pdf a').text('下载');
+    }
+    // 初始化翻譯
+    updateTagsTranslation();
     ////////////////////////////////////////////// 監聽 AJAX 完成事件
     $(document).ajaxComplete(function () {
       // News && Events list
@@ -1572,7 +2026,8 @@ jQuery(function ($) {
           }
         });
       }
-
+      // 翻譯
+      updateTagsTranslation();
     });
     ///////////////////////////////// AOS
     setTimeout(function () {

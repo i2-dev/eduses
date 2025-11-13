@@ -1,0 +1,82 @@
+<?php
+
+/**
+ * @file
+ * Auto Translate module - Automatic translation with DeepSeek API.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\Entity\Node;
+
+/**
+ * Implements hook_page_attachments().
+ */
+function auto_translate_page_attachments(array &$attachments) {
+  // Only attach on node edit pages
+  $route_name = \Drupal::routeMatch()->getRouteName();
+
+  // Debug: Log route name
+  \Drupal::logger('auto_translate')->notice('Current route: @route', ['@route' => $route_name]);
+
+  if ($route_name == 'entity.node.edit_form') {
+    $attachments['#attached']['library'][] = 'auto_translate/auto-translate';
+
+    // Pass configuration to JavaScript
+    $config = \Drupal::config('auto_translate.settings');
+
+    $attachments['#attached']['drupalSettings']['autoTranslate'] = [
+      'apiKey' => $config->get('api_key'),
+      'apiEndpoint' => 'https://api.deepseek.com/v1/chat/completions',
+    ];
+
+    \Drupal::logger('auto_translate')->notice('Library attached to node edit form');
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function auto_translate_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Also attach library here as backup
+  $form['#attached']['library'][] = 'auto_translate/auto-translate';
+
+  // Pass configuration to JavaScript
+  $config = \Drupal::config('auto_translate.settings');
+  $form['#attached']['drupalSettings']['autoTranslate'] = [
+    'apiKey' => $config->get('api_key'),
+    'apiEndpoint' => 'https://api.deepseek.com/v1/chat/completions',
+  ];
+
+  // Add translation buttons to node edit form
+  $form['actions']['translate_tc'] = [
+    '#type' => 'button',
+    '#value' => t('Translate to TC (繁體)'),
+    '#attributes' => [
+      'class' => ['button', 'translate-tc-btn'],
+      'id' => 'translate-tc-button',
+    ],
+    '#weight' => 10,
+  ];
+
+  $form['actions']['translate_sc'] = [
+    '#type' => 'button',
+    '#value' => t('Translate to SC (簡體)'),
+    '#attributes' => [
+      'class' => ['button', 'translate-sc-btn'],
+      'id' => 'translate-sc-button',
+    ],
+    '#weight' => 11,
+  ];
+
+  $form['actions']['save_translation'] = [
+    '#type' => 'button',
+    '#value' => t('Save Translation'),
+    '#attributes' => [
+      'class' => ['button', 'save-translation-btn'],
+      'id' => 'save-translation-button',
+      'style' => 'display: none;',
+    ],
+    '#weight' => 12,
+  ];
+}
+

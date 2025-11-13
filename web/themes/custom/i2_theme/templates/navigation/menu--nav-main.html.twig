@@ -56,18 +56,24 @@ We call a macro which calls itself to render the full tree.
     set link_class = [
       menu_level == 0 ? 'nav-link',
       item.in_active_trail ? 'active',
-      menu_level == 0 and (item.is_expanded or item.is_collapsed) ? 'dropdown-toggle',
       menu_level > 0 ? 'dropdown-item',
-    ]
-  %}
-  {%
-    set toggle_class = [
     ]
   %}
   <li{{ item.attributes.addClass(list_item_classes) }}>
     {% if menu_level == 0 and item.below %}
-      {{ link(item.title, item.url, { 'class': link_class, 'role': 'button', 'data-bs-toggle': 'dropdown', 'aria-expanded': 'false', 'title': ('Expand menu' | t) ~ ' ' ~ item.title }) }}
-      {{ menus.build_menu(item.below, attributes, menu_level + 1) }}
+      {% set menu_id = 'dropdown-menu-' ~ item.title|lower|replace({' ': '-', '/': '-', '#': '', '.': ''})|replace({'--': '-'})|trim('-') %}
+      <div class="d-flex align-items-center">
+        {{ link(item.title, item.url, { 'class': link_class }) }}
+        <button type="button" class="dropdown-toggle" data-bs-target="#{{ menu_id }}" aria-expanded="false" title="{{ ('Expand menu' | t) ~ ' ' ~ item.title }}" aria-label="{{ ('Expand menu' | t) ~ ' ' ~ item.title }}">
+          <span class="visually-hidden">{{ ('Expand menu' | t) ~ ' ' ~ item.title }}</span>
+        </button>
+      </div>
+      {% set menu_attributes = attributes.addClass(['dropdown-menu', 'nav-level-' ~ (menu_level + 1)]) %}
+      <ul{{ menu_attributes }} id="{{ menu_id }}">
+        {% for child_item in item.below %}
+          {{ menus.add_link(child_item, attributes.removeClass(['dropdown-menu', 'nav-level-' ~ (menu_level + 1)]), menu_level + 1) }}
+        {% endfor %}
+      </ul>
     {% else %}
       {{ link(item.title, item.url, { 'class': link_class }) }}
     {% endif %}

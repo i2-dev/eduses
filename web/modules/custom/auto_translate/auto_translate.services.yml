@@ -1,0 +1,5 @@
+services:
+  auto_translate.translate_service:
+    class: Drupal\auto_translate\Service\TranslateService
+    arguments: ['@config.factory', '@http_client']
+

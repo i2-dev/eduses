@@ -477,12 +477,18 @@ body {
     line-height: var(--body-line-height);
 }
 
-/* ol,
-ul {
+header ul,
+header ol,
+footer ul,
+footer ol {
+    margin-bottom: 0;
     padding-left: 0;
-} */
+}
 
-ul li {
+header ul li,
+header ol li,
+footer ul li,
+footer ol li {
     list-style-type: none;
 }
 

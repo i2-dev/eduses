@@ -1,0 +1,75 @@
+/**
+ * @file
+ * Auto Translate module styles.
+ */
+
+.translate-tc-btn,
+.translate-sc-btn {
+  background-color: #0073aa;
+  color: #fff;
+  border: 1px solid #0073aa;
+  padding: 8px 16px;
+  margin-right: 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.translate-tc-btn:hover,
+.translate-sc-btn:hover {
+  background-color: #005a87;
+  border-color: #005a87;
+}
+
+.translate-tc-btn:disabled,
+.translate-sc-btn:disabled {
+  background-color: #ccc;
+  border-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.save-translation-btn {
+  background-color: #46b450;
+  color: #fff;
+  border: 1px solid #46b450;
+  padding: 8px 16px;
+  margin-right: 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.save-translation-btn:hover {
+  background-color: #3a9e42;
+  border-color: #3a9e42;
+}
+
+.save-translation-btn:disabled {
+  background-color: #ccc;
+  border-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Loading indicator */
+.translate-tc-btn:disabled::after,
+.translate-sc-btn:disabled::after {
+  content: '...';
+  animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+  0%, 20% {
+    content: '.';
+  }
+  40% {
+    content: '..';
+  }
+  60%, 100% {
+    content: '...';
+  }
+}
+

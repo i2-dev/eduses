@@ -27,9 +27,9 @@ jQuery(function ($) {
     }
 
     // 檢查是否為homepage edit page (node ID 3)
-    if (window.location.pathname === '/en/node/3/edit' ||
-        window.location.pathname === '/sc/node/3/edit' ||
-        window.location.pathname === '/tc/node/3/edit') {
+    if (window.location.pathname === '/ses/en/node/3/edit' ||
+        window.location.pathname === '/ses/sc/node/3/edit' ||
+        window.location.pathname === '/ses/tc/node/3/edit') {
       $('body').addClass('homepage-edit-page');
       // 在這裡添加您想要的功能
     }

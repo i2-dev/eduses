@@ -862,6 +862,9 @@ footer .navbar-nav .nav-item .dropdown-item:focus {
   right: 0;
   z-index: 2;
 }
+.imageCarouselSwiper .swiper-slide {
+  text-align: center;
+}
 .imageCarouselSwiper .swiper-slide .desktop-image {
   aspect-ratio: 1920 / 950;
   object-fit: cover;
